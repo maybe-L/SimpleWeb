@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Edit Home Page</h1>
+
+    <!-- CKEditor가 적용된 텍스트 영역 -->
+    <form method="POST">
+        <textarea name="content" id="editor">{{ website_data.home_content|safe }}</textarea>
+    </form>
+{% endblock %}
+
+<!-- CKEditor 스크립트 추가 -->
+{% block scripts %}
+    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('editor'); // CKEditor 초기화
+    </script>
+{% endblock %}

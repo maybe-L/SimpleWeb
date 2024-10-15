@@ -1,0 +1,17 @@
+<aside id="thumbnail-list">
+    <h3>Pages</h3>
+    <ul>
+
+
+        <!-- 나머지 메뉴들 -->
+        {% for menu in website_data.menus %}
+            <li>
+                <a href="{{ url_for('main.menu_editor', website_url=website_data.website_url, menu_name=menu.name|lower) }}">
+                    <p>{{ menu.name }}</p> <!-- 메뉴 이름 -->
+                    <img src="/static/thumbnails/thumbnail_{{ menu.name|lower }}.jpg" alt="{{ menu.name }}" 
+                         onerror="this.onerror=null;this.src='/static/images/placeholder.jpg';">
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</aside>

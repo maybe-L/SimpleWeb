@@ -1,0 +1,128 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+{% block content %}
+
+<h1 class="header-title">
+    {% if website_data %}Change Your Website Setup{% else %}Set Up Your Website{% endif %}
+</h1>
+
+<!-- 웹사이트 설정 폼 -->
+<form id="setup-form" method="POST" 
+      action="{% if website_data %}{{ url_for('main.edit_setup', website_url=website_data.website_url) }}{% else %}{{ url_for('main.setup') }}{% endif %}">
+    {{ form.hidden_tag() }}
+
+    <!-- 웹사이트 주소 입력란 -->
+    <label for="website_url">
+        <h3>Website Address:</h3>
+        www.collegeprofile.com/
+        {% if website_data %}
+            <input type="text" id="website-url" name="website_url" class="small-input" value="{{ website_data.website_url }}" readonly>
+        {% else %}
+            <input type="text" id="website-url" name="website_url" class="small-input" placeholder="Enter URL">
+        {% endif %}
+    </label>
+    
+    <!-- 중복 체크 버튼은 처음 설정할 때만 보이게 -->
+    {% if not website_data %}
+        <button type="button" id="check-url-button" class="btn-gray">Check Availability</button>
+        <p id="url-message" style="color: red; display: none;"></p>
+    {% endif %}
+    
+    <!-- URL 중복체크 경고 메시지 수정 -->
+    <p id="submission-warning" style="color: red; display: {% if not website_data %}block{% else %}none{% endif %};">
+        Please check URL availability before submitting.
+    </p>
+
+    <!-- 웹사이트 이름 입력란, 기존 데이터가 있을 경우 디폴트 값으로 표시 -->
+    <label for="website_name"><h3>Website Name:</h3></label>
+    <input type="text" id="website-name" name="website_name" class="small-input input-field" 
+           placeholder="Enter your website name" value="{{ website_data.website_name if website_data else '' }}">
+
+    <h3>Choose Menu Items:</h3>
+
+    <!-- 메뉴 컨테이너 시작 -->
+    <div id="menu-container">
+        <!-- 초기 설정 시 Home Page 메뉴 추가 -->
+        {% if not website_data %}
+            <div class="menu-item" id="menu-item-1">
+                <label for="menu_name_1">Home Page:</label>
+                <input type="text" name="menu_name_1" value="" class="small-input" placeholder="About me"> <!-- 이름 수정 가능 -->
+                <br>
+                <label for="menu_type_1">Menu Type:</label>
+                <select name="menu_type_1" class="small-input">
+                    <option value="home" selected>Home</option>
+                    <option value="list">List</option>
+                    <option value="gallery">Gallery</option>
+                </select>
+                <br>
+                <label for="menu_order_1">Order:</label>
+                <input type="number" name="menu_order_1" value="1" class="small-input" readonly> <!-- order 고정 -->
+                <br><br>
+            </div>
+        {% endif %}
+
+        <!-- 기존에 저장된 메뉴들 표시 -->
+        {% if website_data and website_data.menus %}
+            {% for index, menu in enumerate(website_data.menus, start=1) %}
+            <div class="menu-item" id="menu-item-{{ menu.order }}">
+                {% if menu.order == 1 %}
+                        <!-- Home Page 메뉴 -->
+                        <label for="menu_name_{{ index }}">Home Page:</label>
+                        <input type="text" name="menu_name_{{ index }}" value="{{ menu.name }}" class="small-input">
+                        <br>
+                        <label for="menu_type_{{ index }}">Menu Type:</label>
+                        <select name="menu_type_{{ index }}" class="small-input">
+                            <option value="home" {% if menu.type == 'home' %}selected{% endif %}>Home</option>
+                            <option value="list" {% if menu.type == 'list' %}selected{% endif %}>List</option>
+                            <option value="gallery" {% if menu.type == 'gallery' %}selected{% endif %}>Gallery</option>
+                        </select>
+                        <br>
+                        <label for="menu_order_{{ index }}">Order:</label>
+                        <input type="number" name="menu_order_{{ index }}" value="{{ menu.order }}" class="small-input" readonly>
+                        <br><br>
+                    {% else %}
+                        <!-- 기타 메뉴들 -->
+                        <label for="menu_name_{{ index }}">Menu {{ index }} Name:</label>
+                        <input type="text" name="menu_name_{{ index }}" value="{{ menu.name }}" class="small-input" placeholder="Enter menu name">
+                        <br>
+                        <label for="menu_type_{{ index }}">Menu Type:</label>
+                        <select name="menu_type_{{ index }}" class="small-input">
+                            <option value="home" {% if menu.type == 'home' %}selected{% endif %}>Home</option>
+                            <option value="list" {% if menu.type == 'list' %}selected{% endif %}>List</option>
+                            <option value="gallery" {% if menu.type == 'gallery' %}selected{% endif %}>Gallery</option>
+                        </select>
+                        <br>
+                        <label for="menu_order_{{ index }}">Order:</label>
+                        <input type="number" name="menu_order_{{ index }}" value="{{ menu.order }}" class="small-input">
+
+                        <!-- 메뉴 삭제 버튼 -->
+                        <button type="button" class="delete-menu-button" data-index="{{ index }}">Delete Menu</button>
+                        <br><br>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div> <!-- 메뉴 컨테이너 끝 -->
+
+    <!-- 추가된 메뉴가 들어갈 div -->
+    <div id="new-menu-container"></div>
+
+    <!-- 메뉴 추가 버튼 -->
+    <div style="text-align: left; margin-top: 15px;">  
+        <button type="button" id="addMenuButton" class="btn-gray">Add Another Menu</button>
+    </div>
+
+    <!-- 제출 버튼 -->
+    <div style="text-align: center;">
+        <button type="submit" class="btn btn-primary" id="submit-button">
+            {% if website_data %}Save My Website{% else %}Set Up My Website{% endif %}
+        </button>
+    </div>
+</form>
+
+<br><br>
+
+<!-- 자바스크립트 파일 로드 -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+{% endblock %}

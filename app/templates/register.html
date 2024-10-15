@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+{% block content %}
+    <h1 class="header-title">Register</h1>
+
+    <form method="POST" class="form-style" id="registration-form">
+        {{ form.hidden_tag() }}
+
+        <!-- 유저네임 입력 필드 (유저네임 중복 체크 필요 없으므로 버튼 제거) -->
+        <div class="form-group">
+            {{ form.username.label }}
+            {{ form.username(size=32, class_='input-field', id='username') }}
+        </div>
+        <br>
+
+        <!-- 이메일 입력 필드 -->
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email(size=32, class_='input-field', id='email') }}
+            <!-- 이메일 중복 확인 버튼 추가 -->
+            <button type="button" id="check-email-button" class="btn-gray">Check Availability</button>
+            <p id="email-message" style="color: red; display: none;"></p>  <!-- 이메일 중복 확인 메시지 -->
+        </div>
+        <br>
+
+        <!-- 비밀번호 입력 필드 -->
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(size=32, class_='input-field') }}
+        </div>
+
+        <!-- 비밀번호 확인 필드 -->
+        <div class="form-group">
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password(size=32, class_='input-field') }}
+        </div>
+
+        <!-- 제출 버튼 -->
+        <div class="form-group" style="text-align: center;"> <!-- 가운데 정렬 -->
+            {{ form.submit(class_='btn btn-primary') }}
+        </div>
+    </form>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+{% endblock %}

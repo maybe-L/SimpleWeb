@@ -1,0 +1,54 @@
+<header>
+    
+    {% if website_data %}
+        <h1><a href="{{ url_for('main.user_website', website_url=website_data.website_url) }}" class="homepage-link">{{ website_data.website_name }}</a></h1>
+    {% else %}
+        <h1>Your Website</h1>
+    {% endif %}
+
+    <!-- 햄버거 메뉴 버튼 -->
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- 네비게이션 메뉴 -->
+    {% if website_data and website_data.menus %}
+    <nav id="nav-menu" class="custom-nav">
+        <ul class="custom-menu">
+            {% set sorted_menus = website_data.menus|sort(attribute='order') %}
+            {% for menu in sorted_menus %}
+                <li>
+                    {% if loop.index == 1 %}
+                        <!-- 첫 번째 메뉴는 /{url}로 연결 -->
+                        {% if body_class == 'edit-mode' %}
+                            <a href="{{ url_for('main.main_menu_editor', website_url=website_data.website_url) }}">
+                                {{ menu.name }}
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('main.user_website', website_url=website_data.website_url) }}">
+                                {{ menu.name }}
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <!-- 나머지 메뉴는 /{url}/{menu_name}로 연결 -->
+                        {% if body_class == 'edit-mode' %}
+                            <a href="{{ url_for('main.menu_editor', website_url=website_data.website_url, menu_name=menu.name|lower) }}">
+                                {{ menu.name }}
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('main.menu_page', website_url=website_data.website_url, menu_name=menu.name|lower) }}">
+                                {{ menu.name }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% endif %}
+</header>
+
+<!-- 자바스크립트 파일 로드 --> 
+<script src="{{ url_for('static', filename='script.js') }}"></script>

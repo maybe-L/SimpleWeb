@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor Image Upload</title>
+    <!-- Full 버전 CKEditor 스크립트 -->
+    <script src="https://cdn.ckeditor.com/4.16.0/full/ckeditor.js"></script>
+</head>
+<body>
+    <h1>Edit Your Page with Image Upload</h1>
+
+    <form method="POST" action="/save-edits">
+        <textarea name="content" id="editor">
+            <h2>Welcome to Your Editable Template</h2>
+            <p>This is a beautiful paragraph that you can edit. Add your own text, images, or links!</p>
+        </textarea>
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <script>
+        // CKEditor 초기화 및 이미지 업로드 경로 설정
+        CKEDITOR.replace('editor', {
+            height: 400,
+            removeButtons: 'PasteFromWord',
+            allowedContent: true,
+            filebrowserUploadUrl: '/upload',  // 업로드 경로 설정
+            filebrowserUploadMethod: 'form',
+
+            // 업로드 탭만 보이도록 설정
+            removeDialogTabs: 'image:info;link:info;image:link;image:advanced'
+        });
+    </script>
+</body>
+</html>

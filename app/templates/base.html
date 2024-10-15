@@ -1,0 +1,116 @@
+<!DOCTYPE BASE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+    <title>{% if website_data %}{{ website_data.website_name }}{% else %}Set Up Your Website{% endif %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block extra_styles %}{% endblock %}
+</head>
+<body>
+    <!-- website_data가 있을 때만 어드민 바 표시 -->
+    {% if website_data and current_user.is_authenticated and current_user.id == website_data.user_id %}
+    <div id="admin-bar" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <span style="margin-left: 20px;">Admin Mode</span>
+            <button id="edit-button" style="display: {% if body_class == 'edit-mode' %}none{% else %}inline-block{% endif %};">Edit</button> <!-- edit 버튼 -->
+            <button id="save-button" style="display: {% if body_class == 'edit-mode' %}inline-block{% else %}none{% endif %};">Save</button> <!-- save 버튼 -->
+            <button onclick="window.location.href='{{ url_for('main.edit_setup', website_url=website_data.website_url) }}';">Change Website Setup</button>
+            <button onclick="window.location.href='{{ url_for('main.user_website', website_url=website_data.website_url) }}';">View Website</button>
+        </div>
+
+        <nav>
+            <ul class="auth-status" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
+                {% if current_user.is_authenticated %}
+                    <li style="margin-right: 10px;">Logged in as {{ current_user.username }}</li>
+                    <li style="margin-right: 50px;"><a href="{{ url_for('main.logout') }}">Logout</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    
+    <!-- 로그인 상태를 어드민 바에 오른쪽에 표시 (로그인 상태가 아니라면 로그인 링크) -->
+    <nav>
+        <ul class="auth-status" style="list-style: none; display: flex; align-items: center; margin: 0; padding: 0;">
+            {% if current_user.is_authenticated %}
+                <li style="margin-right: 10px;">Logged in as {{ current_user.username }}</li>
+                <li style="margin-right: 50px;"><a href="{{ url_for('main.logout') }}">Logout</a></li>
+            {% else %}
+                <li style="margin-right: 50px;"><a href="{{ url_for('main.login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- website_data가 있을 때만 header와 aside를 포함 -->
+    {% if website_data %}
+        {% include 'header.html' %}
+        
+        <!-- 에디트 모드에서 나오는 섬네일 리스트 -->
+        {% if body_class == 'edit-mode' %}
+            {% include 'aside.html' %}
+        {% endif %}
+    {% endif %}
+
+    <!-- 메인 컨텐츠 영역 -->
+    {% block content %}{% endblock %}
+
+    <!-- 추가 스크립트 영역 -->
+    {% block scripts %}{% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButton = document.getElementById('edit-button');
+            const saveButton = document.getElementById('save-button');
+            const body = document.body;
+
+            // 처음 editor 모드일 때 'Save' 버튼 활성화
+            if (window.location.href.includes('/editor')) {
+                body.classList.add('edit-mode');
+
+                // aside 보이게 설정
+                const aside = document.getElementById('thumbnail-list');
+                if (aside) {
+                    aside.style.display = 'block';
+                }
+
+                // Save 버튼만 보여줌
+                saveButton.style.display = 'inline-block';
+                editButton.style.display = 'none';
+            }
+
+            // 'Edit' 버튼 클릭 시 에디터 모드로 전환
+            if (editButton) {
+                editButton.addEventListener('click', () => {
+                    const currentUrl = window.location.href;
+                    const editorUrl = currentUrl.includes('/editor') ? currentUrl : `${currentUrl}/editor`;
+
+                    window.location.href = editorUrl;
+                });
+            }
+
+            // 'Save' 버튼 클릭 시 동작
+            if (saveButton) {
+                saveButton.addEventListener('click', () => {
+                    alert("Changes saved!");
+                    const currentUrl = window.location.href;
+                    const newUrl = currentUrl.replace('/editor', '');
+
+                    // 저장 후 페이지를 다시 리로드하여 원래 페이지로 돌아감
+                    window.location.href = newUrl;
+                });
+            }
+
+            // 페이지가 에디터 모드가 아닐 때 'Edit' 버튼만 보임
+            if (!window.location.href.includes('/editor')) {
+                saveButton.style.display = 'none';
+                editButton.style.display = 'inline-block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="list-heading">
+    <h1>{{ menu.name }}</h1>
+    </div> 
+
+    <!-- 리스트 콘텐츠 표시 -->
+    <div class="list-content">
+        {{ menu.content|safe }} <!-- 리스트 콘텐츠가 HTML로 저장되어 있을 경우 safe 필터 적용 -->
+    </div>
+{% endblock %}

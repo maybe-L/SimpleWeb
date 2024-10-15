@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form method="POST" action="/save-edits" id="ckeditor-form">
+        <!-- CKEditor가 적용된 텍스트 영역 -->
+        <textarea name="editor1"></textarea>
+        <!-- 미리 작성된 HTML 컨텐츠를 삽입 -->
+            <h2>Welcome to My Home Page</h2>
+            <p>This is the introduction paragraph. You can edit this text.</p>
+
+            <!-- 이미지 섹션 -->
+            <figure>
+                <img src="/static/images/sample_image.jpg" alt="Sample Image" style="max-width:100%;">
+                <figcaption>Sample Image Caption - You can edit this text too</figcaption>
+            </figure>
+
+            <!-- 추가적으로 이미지를 넣을 수 있는 버튼 영역 -->
+            <p>Add more content and images if you like!</p>
+        </textarea>
+
+        <!-- 저장버튼 숨겨둡니당...
+
+        <button type="submit">Save Changes</button>
+
+        -->
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.ckeditor.com/4.22.0/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('editor1', {
+        height: 800,  // CKEditor 높이 설정
+        width: '97%', // CKEditor 너비 설정
+        filebrowserUploadUrl: '/upload',  // 업로드 경로 설정
+        filebrowserUploadMethod: 'form',
+        allowedContent: true,  // 모든 컨텐츠 허용
+        toolbar: [
+            { name: 'document', items: ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print'] },
+            { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'Undo', 'Redo'] },
+            { name: 'editing', items: ['Find', 'Replace'] },
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'Outdent', 'Indent', 'Blockquote'] },
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar'] },
+            { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+            { name: 'tools', items: ['Maximize'] }
+            ]  // 툴바 구성 요소 지정
+
+
+    });
+</script>
+
+<!--
+toolbar: [
+{ name: 'document', items: ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print'] },
+{ name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'Undo', 'Redo'] },
+{ name: 'editing', items: ['Find', 'Replace'] },
+{ name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat'] },
+{ name: 'paragraph', items: ['NumberedList', 'BulletedList', 'Outdent', 'Indent', 'Blockquote'] },
+{ name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar'] },
+{ name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+{ name: 'tools', items: ['Maximize'] }
+]  // 툴바 구성 요소 지정
+-->
+
+{% endblock %}
+

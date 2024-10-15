@@ -1,0 +1,36 @@
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+{% block content %}
+    <h1 class="header-title">Login</h1>
+
+    <!-- 플래시 메시지 표시 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    -->
+
+    <!-- 로그인 폼 -->
+    <form method="POST" action="{{ url_for('main.login') }}" class="form-style">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.email.label }}<br>
+            {{ form.email(class="input-field", size=32) }}
+        </div>
+        <div>
+            {{ form.password.label }}<br>
+            {{ form.password(class="input-field", size=32) }}
+        </div>
+        <div>
+        <div style="text-align: center;"> <!-- 가운데 정렬 -->
+
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}
