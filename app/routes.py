@@ -96,6 +96,12 @@ def login():
     return render_template('login.html', form=form)
 
 
+@bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('main.index'))
 
 
 
@@ -112,6 +118,119 @@ def check_url():
         return jsonify({'available': False, 'message': 'This URL is already taken'}), 200
     else:
         return jsonify({'available': True, 'message': 'This URL is available'}), 200
+
+
+@bp.route('/save', methods=['POST'])
+@login_required
+def save_content():
+    data = request.get_json()
+    menu_id = data.get('menu_id')
+    content = data.get('content')
+    
+    menu = Menu.query.filter_by(id=menu_id).first()
+    if menu and menu.website.user_id == current_user.id:
+        menu.content = content
+        db.session.commit()
+        return jsonify({'status': 'success'})
+    
+    return jsonify({'status': 'error', 'message': 'No content found'})
+
+
+@bp.route('/setup', methods=['GET', 'POST'])
+@login_required
+def setup():
+    form = WebsiteSetupForm()
+
+    # 현재 유저의 웹사이트 데이터를 가져옴
+    user_website_data = UserWebsiteData.query.filter_by(user_id=current_user.id).first()
+
+    if form.validate_on_submit():
+        website_url = form.website_url.data if not user_website_data else user_website_data.website_url
+        website_name = form.website_name.data if form.website_name.data else user_website_data.website_name
+
+        if not user_website_data:
+            # 새로 생성
+            user_website_data = UserWebsiteData(
+                user_id=current_user.id,
+                website_url=website_url,
+                website_name=website_name,
+            )
+            db.session.add(user_website_data)
+        else:
+            # 웹사이트 이름이 변경된 경우 업데이트
+            if user_website_data.website_name != website_name:
+                user_website_data.website_name = website_name
+
+        db.session.commit()
+
+        # 메뉴 데이터 처리
+        index = 1  # 메뉴 순서 지정
+        while True:
+            menu_name_field = f'menu_name_{index}'
+            menu_type_field = f'menu_type_{index}'
+            menu_order_field = f'menu_order_{index}'
+            menu_name = request.form.get(menu_name_field)
+            menu_type = request.form.get(menu_type_field)
+            menu_order = request.form.get(menu_order_field)
+
+            if menu_name and menu_type:
+                # 기존 메뉴가 있는 경우 업데이트, 없으면 새로 추가
+                menu = Menu.query.filter_by(website_id=user_website_data.id, name=menu_name).first()
+                if menu:
+                    menu.type = menu_type
+                    menu.order = int(menu_order) if menu_order else index  # 메뉴 순서 업데이트
+                else:
+                    new_menu = Menu(
+                        name=menu_name,
+                        type=menu_type,
+                        order=int(menu_order) if menu_order else index,  # 새로운 메뉴의 순서 지정
+                        website_id=user_website_data.id
+                    )
+                    db.session.add(new_menu)
+                index += 1
+            else:
+                break
+
+        db.session.commit()
+
+        # order=1인 메뉴가 메인 페이지가 되어야 함
+        main_menu = Menu.query.filter_by(website_id=user_website_data.id, order=1).first()
+
+        if not main_menu:
+            flash('Main menu could not be set. Please try again.', 'danger')
+            return redirect(url_for('main.setup'))
+
+
+        # 성공적으로 저장된 경우 메인 페이지로 리디렉션
+        flash('Website updated successfully!', 'success')
+        return redirect(url_for('main.user_website', website_url=user_website_data.website_url))
+
+    return render_template('setup.html', form=form, website_data=user_website_data, enumerate=enumerate)
+
+
+@bp.route('/<string:website_url>', methods=['GET'])
+def user_website(website_url):
+    # 웹사이트 데이터 가져오기
+    user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
+
+    # 메인 메뉴(order=1) 가져오기
+    main_menu = Menu.query.filter_by(website_id=user_website_data.id, order=1).first_or_404()
+
+    # 나머지 메뉴들 가져오기
+    menus = Menu.query.filter_by(website_id=user_website_data.id).order_by(Menu.order).all()
+
+    # 템플릿 렌더링 시 main_menu와 menus를 전달
+    return render_template(f'{main_menu.type}_page.html', menu=main_menu, website_data=user_website_data, menus=menus)
+
+
+
+@bp.route('/<string:website_url>/<string:menu_name>', methods=['GET'])
+def menu_page(website_url, menu_name):
+    # /<menu_name> 형식으로 다른 메뉴들 처리
+    user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
+    menu = Menu.query.filter_by(website_id=user_website_data.id, name=menu_name).first_or_404()
+
+    return render_template(f'{menu.type}_page.html', menu=menu, website_data=user_website_data)
 
 
 @bp.route('/<string:website_url>/editor', methods=['GET', 'POST'])
@@ -191,121 +310,6 @@ def menu_editor(website_url, menu_name):
 
 
 
-
-@bp.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('You have been logged out.', 'info')
-    return redirect(url_for('main.index'))
-
-@bp.route('/save', methods=['POST'])
-@login_required
-def save_content():
-    data = request.get_json()
-    menu_id = data.get('menu_id')
-    content = data.get('content')
-    
-    menu = Menu.query.filter_by(id=menu_id).first()
-    if menu and menu.website.user_id == current_user.id:
-        menu.content = content
-        db.session.commit()
-        return jsonify({'status': 'success'})
-    
-    return jsonify({'status': 'error', 'message': 'No content found'})
-
-
-@bp.route('/<string:website_url>', methods=['GET'])
-def user_website(website_url):
-    # 첫 번째 메뉴(order=1)를 가져옴
-    user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
-
-    # 메인 메뉴(order=1)
-    main_menu = Menu.query.filter_by(website_id=user_website_data.id, order=1).first_or_404()
-
-    # 나머지 메뉴
-    menus = Menu.query.filter_by(website_id=user_website_data.id).order_by(Menu.order).all()
-
-    # 메인 페이지는 order=1로 불러옴
-    return render_template(f'{main_menu.type}_page.html', menu=main_menu, website_data=user_website_data)
-
-
-
-@bp.route('/<string:website_url>/<string:menu_name>', methods=['GET'])
-def menu_page(website_url, menu_name):
-    # /<menu_name> 형식으로 다른 메뉴들 처리
-    user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
-    menu = Menu.query.filter_by(website_id=user_website_data.id, name=menu_name).first_or_404()
-
-    return render_template(f'{menu.type}_page.html', menu=menu, website_data=user_website_data)
-
-
-
-
-@bp.route('/setup', methods=['GET', 'POST'])
-@login_required
-def setup():
-    form = WebsiteSetupForm()
-
-    # 현재 유저의 웹사이트 데이터를 가져옴
-    user_website_data = UserWebsiteData.query.filter_by(user_id=current_user.id).first()
-
-    if form.validate_on_submit():
-        website_url = form.website_url.data if not user_website_data else user_website_data.website_url
-        website_name = form.website_name.data if form.website_name.data else user_website_data.website_name
-
-        if not user_website_data:
-            # 새로 생성
-            user_website_data = UserWebsiteData(
-                user_id=current_user.id,
-                website_url=website_url,
-                website_name=website_name,
-            )
-            db.session.add(user_website_data)
-        else:
-            # 웹사이트 이름이 변경된 경우 업데이트
-            if user_website_data.website_name != website_name:
-                user_website_data.website_name = website_name
-
-        db.session.commit()
-
-        # 메뉴 데이터 처리
-        index = 1  # 메뉴 순서 지정
-        while True:
-            menu_name_field = f'menu_name_{index}'
-            menu_type_field = f'menu_type_{index}'
-            menu_order_field = f'menu_order_{index}'
-            menu_name = request.form.get(menu_name_field)
-            menu_type = request.form.get(menu_type_field)
-            menu_order = request.form.get(menu_order_field)
-
-            if menu_name and menu_type:
-                # 기존 메뉴가 있는 경우 업데이트, 없으면 새로 추가
-                menu = Menu.query.filter_by(website_id=user_website_data.id, name=menu_name).first()
-                if menu:
-                    menu.type = menu_type
-                    menu.order = int(menu_order) if menu_order else index  # 메뉴 순서 업데이트
-                else:
-                    new_menu = Menu(
-                        name=menu_name,
-                        type=menu_type,
-                        order=int(menu_order) if menu_order else index,  # 새로운 메뉴의 순서 지정
-                        website_id=user_website_data.id
-                    )
-                    db.session.add(new_menu)
-                index += 1
-            else:
-                break
-
-        db.session.commit()
-
-        # 성공적으로 저장된 경우 메인 페이지로 리디렉션
-        flash('Website updated successfully!', 'success')
-        return redirect(url_for('main.user_website', website_url=user_website_data.website_url))
-
-    return render_template('setup.html', form=form, website_data=user_website_data, enumerate=enumerate)
-
-
 @bp.route('/<string:website_url>/edit-setup', methods=['GET', 'POST'])
 @login_required
 def edit_setup(website_url):
@@ -379,7 +383,7 @@ def edit_setup(website_url):
     else:
         form.website_name.data = user_website_data.website_name
 
-    return render_template('setup.html', form=form, website_data=user_website_data, enumerate=enumerate)
+    return render_template('setup.html', form=form, website_data=user_website_data, menus=menus, enumerate=enumerate)
 
 
 

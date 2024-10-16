@@ -8,8 +8,8 @@
 
 <!-- 웹사이트 설정 폼 -->
 <form id="setup-form" method="POST" 
-      action="{% if website_data %}{{ url_for('main.edit_setup', website_url=website_data.website_url) }}{% else %}{{ url_for('main.setup') }}{% endif %}">
-    {{ form.hidden_tag() }}
+        action="{% if website_data %}{{ url_for('main.edit_setup', website_url=website_data.website_url) }}{% else %}{{ url_for('main.setup') }}{% endif %}">
+        {{ form.hidden_tag() }}
 
     <!-- 웹사이트 주소 입력란 -->
     <label for="website_url">
@@ -124,5 +124,6 @@
 
 <!-- 자바스크립트 파일 로드 -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 
 {% endblock %}
