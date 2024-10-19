@@ -224,13 +224,18 @@ def user_website(website_url):
 
 
 
+    
+
 @bp.route('/<string:website_url>/<string:menu_name>', methods=['GET'])
 def menu_page(website_url, menu_name):
-    # /<menu_name> 형식으로 다른 메뉴들 처리
+
     user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
-    menu = Menu.query.filter_by(website_id=user_website_data.id, name=menu_name).first_or_404()
+    menu = Menu.query.filter(Menu.website_id == user_website_data.id, Menu.name.ilike(menu_name)).first_or_404()
 
     return render_template(f'{menu.type}_page.html', menu=menu, website_data=user_website_data)
+
+
+
 
 
 @bp.route('/<string:website_url>/editor', methods=['GET', 'POST'])
@@ -281,7 +286,8 @@ def menu_editor(website_url, menu_name):
 
     # Get website and menu data
     user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
-    menu = Menu.query.filter_by(website_id=user_website_data.id, name=menu_name).first_or_404()
+    menu = Menu.query.filter(Menu.website_id == user_website_data.id, Menu.name.ilike(menu_name)).first_or_404()
+
 
     if form.validate_on_submit():
         # Save edited content for the selected menu
