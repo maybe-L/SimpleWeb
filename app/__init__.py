@@ -3,6 +3,8 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from flask import send_from_directory
+
 
 import os
 
@@ -59,6 +61,11 @@ def create_app():
     # 라우트 임포트
     from .routes import bp as main_bp  # 블루프린트 다시 'main'으로 임포트
     app.register_blueprint(main_bp)  # URL 프리픽스 없이 등록
+
+    # dist 폴더 내의 파일을 서빙할 수 있도록 경로 설정
+    @app.route('/dist/<path:filename>')
+    def dist_static(filename):
+        return send_from_directory('dist', filename)
 
 
 

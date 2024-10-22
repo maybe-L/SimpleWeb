@@ -50,18 +50,7 @@
     <textarea name="content" id="editor">{{ content|safe }}</textarea>
     <input type="hidden" name="menu_id" value="{{ menu.id }}">
 
-    <!-- 템플릿이 적용된 HTML -->
-            <div class="template-header">
-                This is the header of the page. (Fixed, cannot be edited)
-            </div>
-            <div class="template-content">
-                <p>Welcome to this website. You can change this text.</p>
-                <p>Here you can write about yourself or your services.</p>
-            </div>
-            <div class="template-image">
-                <img src="https://via.placeholder.com/300" alt="Template Image">
-                <p>(You can change the image but the layout is fixed)</p>
-            </div>
+
     <button type="submit" id="save-button">Save</button>
 
 </form>
@@ -74,16 +63,17 @@
 <!-- CKEditor JS 파일을 로드 -->
 <script src="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.umd.js"></script>
 <script>
-    const { ClassicEditor, Essentials, Bold, Italic, Paragraph, Font, Image, ImageToolbar, ImageUpload, MediaEmbed, SimpleUploadAdapter, SourceEditing, ImageStyle } = CKEDITOR;
+
+
+    const { ClassicEditor, Essentials, Bold, Italic, Paragraph, Font, Image, ImageToolbar, ImageUpload, MediaEmbed, SimpleUploadAdapter, ImageStyle, SourceEditing, ImageResize } = CKEDITOR;
 
     let editorInstance;
 
     ClassicEditor
     .create(document.querySelector('#editor'), {
         plugins: [
-            Essentials, Paragraph, Bold, Italic, Font, 
-            Image, ImageToolbar, ImageUpload, MediaEmbed, 
-            SimpleUploadAdapter, SourceEditing, ImageStyle
+            Essentials, Paragraph, Bold, Italic, Font, Image, ImageToolbar, ImageUpload, MediaEmbed, 
+            SimpleUploadAdapter, SourceEditing, ImageStyle, ImageResize, ImageResizeEditing, ImageResizeHandles
         ],
         toolbar: [
             'undo', 'redo', '|',
@@ -93,20 +83,37 @@
             'sourceEditing'
         ],
         image: {
-            toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
-            styles: [
-                'full', 
-                'side'
-            ]
+            toolbar: [
+                'imageStyle:full', 'imageStyle:side', '|', 
+                'imageResize', 'imageTextAlternative'
+            ],
+            resizeOptions: [
+                {
+                    name: 'resizeImage:original',
+                    value: null,
+                    label: 'Original',
+                    icon: 'original-size'
+                },
+                {
+                    name: 'resizeImage:50',
+                    value: '50',
+                    label: '50%',
+                    icon: 'medium'
+                },
+                {
+                    name: 'resizeImage:75',
+                    value: '75',
+                    label: '75%',
+                    icon: 'large'
+                }
+            ],
+            resizeUnit: '%'
         },
         simpleUpload: {
             uploadUrl: '/upload-image',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
-        },
-        ckfinder: {
-            uploadUrl: '/upload-image'
         }
     })
     .then(editor => {
@@ -152,6 +159,7 @@
         console.error('There was a problem initializing the CKEditor:', error);
     });
 </script>
+
 
 
 {% endblock %}

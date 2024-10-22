@@ -1,12 +1,122 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="list-heading">
-    <h1>{{ menu.name }}</h1>
-    </div> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor with Template</title>
 
-    <!-- 리스트 콘텐츠 표시 -->
-    <div class="list-content">
-        {{ menu.content|safe }} <!-- 리스트 콘텐츠가 HTML로 저장되어 있을 경우 safe 필터 적용 -->
+    <!-- CKEditor 스타일 및 에디터 불러오기 -->
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.css">
+    <style>
+        /* 템플릿 스타일을 여기에 적용 */
+        .template-container {
+            border: 2px solid #333;
+            padding: 20px;
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .template-header {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .template-content {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .template-image {
+            width: 100%;
+            height: auto;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="ckeditor-form" method="POST" action="/save-edits">
+    <!-- 템플릿이 적용된 HTML -->
+    <div id="editor">
+        <div class="template-container">
+            <div class="template-header">
+                This is the header of the page. (Fixed, cannot be edited)
+            </div>
+            <div class="template-content">
+                <p>Welcome to this website. You can change this text.</p>
+                <p>Here you can write about yourself or your services.</p>
+            </div>
+            <div class="template-image">
+                <img src="https://via.placeholder.com/300" alt="Template Image">
+                <p>(You can change the image but the layout is fixed)</p>
+            </div>
+        </div>
     </div>
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<!-- CKEditor 스크립트 -->
+<script>
+    const { ClassicEditor, Essentials, Bold, Italic, Paragraph, Font, Image, ImageToolbar, ImageUpload, MediaEmbed, SimpleUploadAdapter, SourceEditing, ImageStyle } = CKEDITOR;
+
+    ClassicEditor
+    .create(document.querySelector('#editor'), {
+        plugins: [
+            Essentials, Paragraph, Bold, Italic, Font, 
+            Image, ImageToolbar, ImageUpload, MediaEmbed, 
+            SimpleUploadAdapter, SourceEditing, ImageStyle
+        ],
+        toolbar: [
+            'undo', 'redo', '|',
+            'bold', 'italic', '|',
+            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+            'imageUpload', 'mediaEmbed', '|',
+            'sourceEditing'
+        ],
+        image: {
+            toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+            styles: [
+                'full', 
+                'side'
+            ]
+        },
+        simpleUpload: {
+            uploadUrl: '/upload-image',  // 업로드 엔드포인트 설정
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        },
+        // Read-only 템플릿 설정
+        initialData: `
+            <div class="template-container">
+                <div class="template-header" contenteditable="false">
+                    This is the header of the page. (Fixed, cannot be edited)
+                </div>
+                <div class="template-content">
+                    <p contenteditable="true">Welcome to this website. You can change this text.</p>
+                    <p contenteditable="true">Here you can write about yourself or your services.</p>
+                </div>
+                <div class="template-image">
+                    <img src="https://via.placeholder.com/300" alt="Template Image" contenteditable="true">
+                    <p contenteditable="false">(You can change the image but the layout is fixed)</p>
+                </div>
+            </div>
+        `
+    })
+    .then(editor => {
+        console.log('Editor initialized', editor);
+    })
+    .catch(error => {
+        console.error('Error initializing CKEditor:', error);
+    });
+</script>
+
+</body>
+</html>
+
 {% endblock %}

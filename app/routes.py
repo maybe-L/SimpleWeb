@@ -9,6 +9,8 @@ from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField, HiddenField  # 여기에 필요한 필드들을 임포트
 from sqlalchemy.exc import IntegrityError
+from flask import send_from_directory
+
 
 
 import os
@@ -299,6 +301,9 @@ def menu_editor(website_url, menu_name):
             flash('Changes saved!', 'success')
 
         return redirect(url_for('main.menu_editor', website_url=website_url, menu_name=menu_name))
+    
+        # 에디터에서 내용을 표시할 때 템플릿 기본 내용이 없으면 기본 콘텐츠를 보여줌
+    content = menu.content if menu.content and menu.content != 'None' else ''
 
     # 메뉴의 타입에 따라 다른 템플릿을 사용
     template_mapping = {
@@ -499,4 +504,6 @@ def save_edits():
         return jsonify({'status': 'success'}), 200
     else:
         return jsonify({'status': 'error', 'message': 'Unauthorized or content not found'}), 403
+
+
 

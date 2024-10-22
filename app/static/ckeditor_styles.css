@@ -1,0 +1,21 @@
+/* ckeditor_styles.css */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+h1 {
+    color: #333;
+    font-size: 50px;
+}
+
+p {
+    font-size: 30px;
+    color: #666;
+}
+
+.image-gallery img {
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+}
