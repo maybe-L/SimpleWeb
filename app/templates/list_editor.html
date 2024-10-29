@@ -1,165 +1,120 @@
 {% extends 'base.html' %}
 
+{% block extra_styles %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<title>CKEditor 5 - Quick start CDN</title>
+
+<!-- CKEditor CSS 로드 -->
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.css">
+{% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>CKEditor with Template</title>
-
-    <!-- CKEditor 스타일 및 에디터 불러오기 -->
-    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.css">
-    <style>
-        /* 템플릿 스타일을 여기에 적용 */
-        .template-container {
-            border: 2px solid #333;
-            padding: 20px;
-            background-color: #f9f9f9;
-            font-family: Arial, sans-serif;
-        }
-
-        .template-header {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .template-content {
-            font-size: 18px;
-            color: #555;
-        }
-
-        .template-image {
-            width: 100%;
-            height: auto;
-            max-width: 300px;
-        }
-    </style>
-</head>
-<body>
-
-
-    <form id="ckeditor-form" method="POST" 
+<form id="ckeditor-form" method="POST" 
     action="{% if menu.order == 1 %}{{ url_for('main.main_menu_editor', website_url=website_data.website_url) }}{% else %}{{ url_for('main.menu_editor', website_url=website_data.website_url, menu_name=menu.name) }}{% endif %}">
     {{ form.hidden_tag() }}  <!-- CSRF 토큰을 포함하는 hidden_tag() -->
 
     <textarea name="content" id="editor">{{ content|safe }}</textarea>
     <input type="hidden" name="menu_id" value="{{ menu.id }}">
-
-
     <button type="submit" id="save-button">Save</button>
-
 </form>
-
-
 {% endblock %}
-
 
 {% block scripts %}
 <!-- CKEditor JS 파일을 로드 -->
-<script src="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.umd.js"></script>
-<script>
+<script type="importmap">
+    {
+        "imports": {
+            "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.2.0/ckeditor5.js",
+            "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.2.0/"
+        }
+    }
+</script>
 
-
-    const { ClassicEditor, Essentials, Bold, Italic, Paragraph, Font, Image, ImageToolbar, ImageUpload, MediaEmbed, SimpleUploadAdapter, ImageStyle, SourceEditing, ImageResize } = CKEDITOR;
-
-    let editorInstance;
+<script type="module">
+    import {
+        ClassicEditor,
+        Essentials,
+        Bold,
+        Italic,
+        Font,
+        Paragraph,
+        Image,
+        ImageToolbar,
+        ImageCaption,
+        ImageResize,
+        ImageUpload,
+        SimpleUploadAdapter, 
+        SourceEditing,       
+        ImageStyle,
+        MediaEmbed,
+        Table,
+        TableCaption,
+        TableCellProperties,
+        TableColumnResize,
+        TableProperties,
+        TableToolbar,
+        HorizontalLine  /* 수평선 플러그인 추가 */
+    } from 'ckeditor5';
 
     ClassicEditor
-    .create(document.querySelector('#editor'), {
-        plugins: [
-            Essentials, Paragraph, Bold, Italic, Font, Image, ImageToolbar, ImageUpload, MediaEmbed, 
-            SimpleUploadAdapter, SourceEditing, ImageStyle, ImageResize, ImageResizeEditing, ImageResizeHandles
-        ],
-        toolbar: [
-            'undo', 'redo', '|',
-            'bold', 'italic', '|',
-            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-            'imageUpload', 'mediaEmbed', '|',
-            'sourceEditing'
-        ],
-        image: {
+        .create( document.querySelector( '#editor' ), {
+            plugins: [
+                Essentials, Paragraph, Bold, Italic, Font, 
+                Image, ImageToolbar, ImageCaption, ImageResize, ImageUpload, MediaEmbed, 
+                SimpleUploadAdapter, SourceEditing, ImageStyle,
+                Table,
+                TableCaption,
+                TableCellProperties,
+                TableColumnResize,
+                TableProperties,
+                TableToolbar,
+                HorizontalLine  /* 수평선 플러그인 추가 */
+
+            ],
             toolbar: [
-                'imageStyle:full', 'imageStyle:side', '|', 
-                'imageResize', 'imageTextAlternative'
+                'undo', 'redo', '|',
+                'bold', 'italic', '|',
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                'imageUpload', 'mediaEmbed', '|', 'insertTable', '|',
+                'sourceEditing', '|',
+                'horizontalLine' /* 툴바에 수평선 버튼 추가 */
+
             ],
-            resizeOptions: [
-                {
-                    name: 'resizeImage:original',
-                    value: null,
-                    label: 'Original',
-                    icon: 'original-size'
-                },
-                {
-                    name: 'resizeImage:50',
-                    value: '50',
-                    label: '50%',
-                    icon: 'medium'
-                },
-                {
-                    name: 'resizeImage:75',
-                    value: '75',
-                    label: '75%',
-                    icon: 'large'
-                }
-            ],
-            resizeUnit: '%'
+
+            image: {
+            toolbar: [
+                'imageStyle:inline',
+                'imageStyle:wrapText',
+                'imageStyle:breakText',
+                '|',
+                'resizeImage'
+            ]
         },
-        simpleUpload: {
-            uploadUrl: '/upload-image',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        }
+
+            simpleUpload: {
+                uploadUrl: '/upload-image',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            },
+            ckfinder: {
+            uploadUrl: '/upload-image'
+            },
+
+
     })
     .then(editor => {
-        editorInstance = editor;
-
-        document.getElementById('save-button').addEventListener('click', function(event) {
-            event.preventDefault();  
-            const content = editor.getData();  
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            let saveUrl = '';
-            {% if menu.order == 1 %}
-                saveUrl = '{{ url_for("main.main_menu_editor", website_url=website_data.website_url) }}';
-            {% else %}
-                saveUrl = '{{ url_for("main.menu_editor", website_url=website_data.website_url, menu_name=menu.name) }}';
-            {% endif %}
-
-            fetch(saveUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({
-                    content: content,
-                    menu_id: '{{ menu.id }}'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Changes saved successfully!');
-                } else {
-                    alert('Failed to save content.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
+        console.log(editor.getData()); // HTML로 변환된 결과를 확인
     })
     .catch(error => {
-        console.error('There was a problem initializing the CKEditor:', error);
+        console.error('There was a problem initializing the editor.', error);
     });
 </script>
 
+<script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
 
 
 {% endblock %}

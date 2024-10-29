@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<body class="template-gallery">
+
+
     <div class="gallery-heading">
-        <h1>{{ menu.name or "Your Gallery Page" }}</h1>
+        {{ menu.name or "Your Gallery Page" }}
 
         <div class="gallery-content">
             {% if menu.content and menu.content.strip() and menu.content != 'None' %}
@@ -10,18 +14,64 @@
             {% else %}
                 <!-- 기본 콘텐츠를 여러 줄로 작성 -->
                 <div class="gallery-content">
-                    <h2>Welcome to your gallery page!</h2>
-                    <p>This is your default content. You can upload your images here:</p>
-
-                    <div class="image-gallery">
-                        <img src="/static/images/sample_image.jpg" alt="Gallery Image 1">
-                        <img src="/static/images/sample_image.jpg" alt="Gallery Image 2">
-                        <img src="/static/images/sample_image.jpg" alt="Gallery Image 3">
-                    </div>
-
-                    <p>Feel free to customize the gallery layout and images to suit your website needs!</p>
-                </div>
+                    <hr>
+                    <figure class="media">
+                        <oembed url="https://youtu.be/9Bh9DJGPhG0"></oembed>
+                    </figure>
+                    <p>
+                        <strong>Title:</strong> <i>Modern Dance Ensemble - "</i><strong>Lord of the Flies</strong><i>"</i><br>
+                        <i>Date:</i> February 2023<br>
+                        <i>Description:</i> A modern dance piece performed as part of a collaborative group. Emphasized group dynamics, synchronization, and expressive movement.
+                    </p>
+                    <hr>
+                    <figure class="image">
+                        <img style="aspect-ratio:2100/1500;" src="http://127.0.0.1:5000/static/uploads/painting.jpg" width="2100" height="1500">
+                    </figure>
+                    <p>
+                        <strong>Title:</strong> <i>Reflections of Identity</i>
+                    </p>
+                    <p>
+                        <i>Medium:</i> Oil on Canvas<br>
+                        <i>Dimensions:</i> 18 x 24 inches<br>
+                        <i>Year:</i> 2023
+                    </p>
+                    <hr>
+                    <p>
+                        &nbsp;
+                    </p>
             {% endif %}
         </div>
     </div>
+
+<!-- oEmbed 태그를 iframe으로 변환하는 스크립트 추가 -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const embeds = document.querySelectorAll('oembed[url]');
+        embeds.forEach(embed => {
+            let url = embed.getAttribute('url');
+            
+            // 유튜브 링크를 임베드 형식으로 변환
+            if (url.includes('youtube.com/watch')) {
+                url = url.replace('watch?v=', 'embed/');
+            }
+
+            if (url.includes('youtu.be/')) {
+            url = url.replace('youtu.be/', 'www.youtube.com/embed/');
+            }
+            
+            const iframe = document.createElement('iframe');
+            iframe.setAttribute('src', url);
+            iframe.setAttribute('width', '100%');
+            iframe.setAttribute('height', '400px');
+            iframe.setAttribute('frameborder', '0');
+            iframe.setAttribute('allowfullscreen', 'true');
+            iframe.setAttribute('style', 'max-width: 600px; width: 100%; display: block; margin-bottom: 20px; clear: both;'); // 왼쪽 정렬 없이 텍스트 아래로
+            embed.parentNode.replaceChild(iframe, embed);
+        });
+    });
+
+    </script>
+
+</body>
+
 {% endblock %}

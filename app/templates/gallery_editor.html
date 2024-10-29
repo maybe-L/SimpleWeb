@@ -24,86 +24,99 @@
 
 {% block scripts %}
 <!-- CKEditor JS 파일을 로드 -->
-<script src="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.umd.js"></script>
-<script>
-    const { ClassicEditor, Essentials, Bold, Italic, Paragraph, Font, Image, ImageToolbar, ImageUpload, MediaEmbed, SimpleUploadAdapter, SourceEditing, ImageStyle } = CKEDITOR;
+<script type="importmap">
+    {
+        "imports": {
+            "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.2.0/ckeditor5.js",
+            "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.2.0/"
+        }
+    }
+</script>
 
-    let editorInstance;
+<script type="module">
+    import {
+        ClassicEditor,
+        Essentials,
+        Bold,
+        Italic,
+        Font,
+        Paragraph,
+        Image,
+        ImageToolbar,
+        ImageCaption,
+        ImageResize,
+        ImageUpload,
+        SimpleUploadAdapter, 
+        SourceEditing,       
+        ImageStyle,
+        MediaEmbed,
+        Table,
+        TableCaption,
+        TableCellProperties,
+        TableColumnResize,
+        TableProperties,
+        TableToolbar,
+        HorizontalLine  /* 수평선 플러그인 추가 */
+    } from 'ckeditor5';
 
     ClassicEditor
-    .create(document.querySelector('#editor'), {
-        plugins: [
-            Essentials, Paragraph, Bold, Italic, Font, 
-            Image, ImageToolbar, ImageUpload, MediaEmbed, 
-            SimpleUploadAdapter, SourceEditing, ImageStyle
-        ],
-        toolbar: [
-            'undo', 'redo', '|',
-            'bold', 'italic', '|',
-            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-            'imageUpload', 'mediaEmbed', '|',
-            'sourceEditing'
-        ],
-        image: {
-            toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
-            styles: [
-                'full', 
-                'side'
+        .create( document.querySelector( '#editor' ), {
+            plugins: [
+                Essentials, Paragraph, Bold, Italic, Font, 
+                Image, ImageToolbar, ImageCaption, ImageResize, ImageUpload, MediaEmbed, 
+                SimpleUploadAdapter, SourceEditing, ImageStyle,
+                Table,
+                TableCaption,
+                TableCellProperties,
+                TableColumnResize,
+                TableProperties,
+                TableToolbar,
+                HorizontalLine  /* 수평선 플러그인 추가 */
+
+            ],
+            toolbar: [
+                'undo', 'redo', '|',
+                'bold', 'italic', '|',
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                'imageUpload', 'mediaEmbed', '|', 'insertTable', '|',
+                'sourceEditing', '|',
+                'horizontalLine' /* 툴바에 수평선 버튼 추가 */
+
+            ],
+
+            image: {
+            toolbar: [
+                'imageStyle:inline',
+                'imageStyle:wrapText',
+                'imageStyle:breakText',
+                '|',
+                'resizeImage'
             ]
         },
-        simpleUpload: {
-            uploadUrl: '/upload-image',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        },
-        ckfinder: {
+
+            simpleUpload: {
+                uploadUrl: '/upload-image',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            },
+            ckfinder: {
             uploadUrl: '/upload-image'
-        }
+            },
+
+
     })
     .then(editor => {
-        editorInstance = editor;
-
-        document.getElementById('save-button').addEventListener('click', function(event) {
-            event.preventDefault();  
-            const content = editor.getData();  
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            let saveUrl = '';
-            {% if menu.order == 1 %}
-                saveUrl = '{{ url_for("main.main_menu_editor", website_url=website_data.website_url) }}';
-            {% else %}
-                saveUrl = '{{ url_for("main.menu_editor", website_url=website_data.website_url, menu_name=menu.name) }}';
-            {% endif %}
-
-            fetch(saveUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({
-                    content: content,
-                    menu_id: '{{ menu.id }}'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Changes saved successfully!');
-                } else {
-                    alert('Failed to save content.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
+        console.log(editor.getData()); // HTML로 변환된 결과를 확인
     })
     .catch(error => {
-        console.error('There was a problem initializing the CKEditor:', error);
+        console.error('There was a problem initializing the editor.', error);
     });
 </script>
+
+
+
+<script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
 
 
 {% endblock %}

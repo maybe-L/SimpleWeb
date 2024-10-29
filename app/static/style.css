@@ -1,11 +1,13 @@
 /* 고딕체 헤더 스타일 */
 .header-title {
-    font-family: 'Roboto', sans-serif;
-    font-size: 3rem;
+    font-size: 30px;
     font-weight: 300; /* 얇은 글씨 */
     color: #707070;
     text-align: center;
     margin-top: 0;
+    padding-top: 20px;    
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
 }
 
 
@@ -13,12 +15,12 @@ body {
     min-width: 320px !important;
     width: 100%; /* 메뉴가 화면 너비에 맞게 표시되도록 설정 */
 
-    font-family: 'Roboto', sans-serif;
     font-size: 14px;
     color: #5a5a5a;
     line-height: 1.6;
     margin: 0;
     padding: 0;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 
@@ -274,6 +276,8 @@ button:hover, input[type="submit"]:hover {
     width: 100%;
     z-index: 1000;
     text-align: center;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+
 }
 
 #admin-bar button {
@@ -310,6 +314,8 @@ nav ul {
     display: flex;
     justify-content: flex-start; /* 왼쪽 정렬 */
     white-space: nowrap; /* 한 줄로 고정 */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+
 
 }
 
@@ -382,7 +388,9 @@ a {
     text-decoration: none; /* 밑줄 제거 */
     color: #85a1e8; /* 기본 파란색 */
     font-weight: bold; /* 두꺼운 글씨 */
-    font-size: 24px;
+    font-size: 28px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+
 }
 
 /* 마우스를 올렸을 때 색깔을 약간 진하게 */
@@ -482,12 +490,73 @@ img {
     object-fit: contain; /* 이미지가 깨지지 않도록 비율을 유지하면서 부모 요소 안에 맞춤 */
 }
 
-.list-heading, .list-content {
-    padding: 20px;
-
+.home-heading {
+    padding-left: 30px;
+    padding-top: 30px;
+    font-size: 40px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
 
-.gallery-heading, .gallery-content {
-    padding: 20px;
-
+.home-content {
+    padding-left: 20px;
+    padding-right: 50px;
+    font-size: 18px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
+
+.list-heading {
+    padding-left: 30px;
+    padding-top: 30px;
+    font-size: 40px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+
+.list-content {
+    padding-left: 20px;
+    padding-right: 50px;
+    font-size: 18px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+
+.gallery-heading {
+    padding-left: 30px;
+    padding-top: 30px;
+    font-size: 40px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+
+.gallery-content {
+    padding-left: 20px;
+    padding-right: 50px;
+    font-size: 18px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    max-width: 800px; /* 텍스트 컨테이너의 최대 너비를 설정 */
+    margin: 0 auto 0 0; /* 왼쪽에 고정되도록 하고, 우측 여백 없애기 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+
+
+/* 홈 템플릿 이미지 스타일 */
+.template-home img {
+    width: 100%; /* 가로 너비를 부모 요소에 맞춤 */
+    height: auto; /* 세로 높이를 자동으로 맞춰 비율 유지 */
+    object-fit: contain; /* 이미지가 깨지지 않도록 비율을 유지하면서 부모 요소 안에 맞춤 */
+    min-width: 300px; /* 최소 너비 설정 */
+    max-width: 600px; /* 최대 너비 설정 */
+    float: left; /* 이미지를 왼쪽으로 정렬 */
+    margin-right: 30px; /* 텍스트와 이미지 간격을 주기 위한 오른쪽 여백 */
+    margin-bottom: 30px;
+}
+
+/* 갤러리 템플릿 이미지 스타일 */
+.template-gallery img {
+    width: 100%; /* 가로 너비를 부모 요소에 맞춤 */
+    height: auto; /* 세로 높이를 자동으로 맞춰 비율 유지 */
+    object-fit: contain; /* 이미지가 깨지지 않도록 비율 유지 */
+    min-width: 300px; /* 최소 너비 설정 */
+    max-width: 600px; /* 최대 너비 설정 */
+    display: block; /* 이미지가 텍스트 위에 블록처럼 배치되게 설정 */
+    margin: 30px 0; /* 이미지 위아래 여백 설정, 좌우 여백 없음 */
+    clear: both; /* 이미지 위에 떠 있는 요소가 있더라도 이미지 아래로 내림 */
+}
+
