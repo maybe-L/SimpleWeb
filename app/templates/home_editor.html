@@ -18,7 +18,7 @@
 
     <textarea name="content" id="editor">{{ content|safe }}</textarea>
     <input type="hidden" name="menu_id" value="{{ menu.id }}">
-    <button type="submit" id="save-button">Save</button>
+    <button type="submit" id="save-button" data-menu-name="{{ menu.name }}">Save</button>
 </form>
 {% endblock %}
 
@@ -34,85 +34,71 @@
 </script>
 
 <script type="module">
-    import {
-        ClassicEditor,
-        Essentials,
-        Bold,
-        Italic,
-        Font,
-        Paragraph,
-        Image,
-        ImageToolbar,
-        ImageCaption,
-        ImageResize,
-        ImageUpload,
-        SimpleUploadAdapter, 
-        SourceEditing,       
-        ImageStyle,
-        MediaEmbed,
-        Table,
-        TableCaption,
-        TableCellProperties,
-        TableColumnResize,
-        TableProperties,
-        TableToolbar,
-        HorizontalLine  /* 수평선 플러그인 추가 */
-    } from 'ckeditor5';
+import {
+    ClassicEditor,
+    Essentials,
+    Bold,
+    Italic,
+    Font,
+    Paragraph,
+    Image,
+    ImageToolbar,
+    ImageCaption,
+    ImageResize,
+    ImageUpload,
+    SimpleUploadAdapter,
+    SourceEditing,
+    ImageStyle,
+    MediaEmbed,
+    Table,
+    TableCaption,
+    TableCellProperties,
+    TableColumnResize,
+    TableProperties,
+    TableToolbar,
+    HorizontalLine
+} from 'ckeditor5';
 
-    ClassicEditor
-        .create( document.querySelector( '#editor' ), {
-            plugins: [
-                Essentials, Paragraph, Bold, Italic, Font, 
-                Image, ImageToolbar, ImageCaption, ImageResize, ImageUpload, MediaEmbed, 
-                SimpleUploadAdapter, SourceEditing, ImageStyle,
-                Table,
-                TableCaption,
-                TableCellProperties,
-                TableColumnResize,
-                TableProperties,
-                TableToolbar,
-                HorizontalLine  /* 수평선 플러그인 추가 */
-
-            ],
+ClassicEditor
+    .create(document.querySelector('#editor'), {
+        plugins: [
+            Essentials, Paragraph, Bold, Italic, Font,
+            Image, ImageToolbar, ImageCaption, ImageResize, ImageUpload, MediaEmbed,
+            SimpleUploadAdapter, SourceEditing, ImageStyle,
+            Table, TableCaption, TableCellProperties, TableColumnResize,
+            TableProperties, TableToolbar, HorizontalLine
+        ],
+        toolbar: [
+            'undo', 'redo', '|', 'bold', 'italic', '|', 'fontSize', 'fontFamily', 
+            'fontColor', 'fontBackgroundColor', '|', 'imageUpload', 'mediaEmbed', 
+            '|', 'insertTable', '|', 'sourceEditing', '|', 'horizontalLine'
+        ],
+        image: {
             toolbar: [
-                'undo', 'redo', '|',
-                'bold', 'italic', '|',
-                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-                'imageUpload', 'mediaEmbed', '|', 'insertTable', '|',
-                'sourceEditing', '|',
-                'horizontalLine' /* 툴바에 수평선 버튼 추가 */
-
-            ],
-
-            image: {
-            toolbar: [
-                'imageStyle:inline',
-                'imageStyle:wrapText',
-                'imageStyle:breakText',
-                '|',
-                'resizeImage'
+                'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', '|', 'resizeImage'
             ]
         },
-
-            simpleUpload: {
-                uploadUrl: '/upload-image',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            },
-            ckfinder: {
-            uploadUrl: '/upload-image'
-            },
-
-
+        simpleUpload: {
+            uploadUrl: '/upload-image',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        },
+        ckfinder: { uploadUrl: '/upload-image' },
     })
     .then(editor => {
-        console.log(editor.getData()); // HTML로 변환된 결과를 확인
+        console.log(editor.getData());
     })
     .catch(error => {
         console.error('There was a problem initializing the editor.', error);
     });
+
+
+
+
 </script>
+
+
 
 <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
 

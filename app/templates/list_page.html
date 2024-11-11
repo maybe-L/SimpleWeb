@@ -4,77 +4,78 @@
 
 
 <body class="template-list">
+    <div id="menu-content">  <!-- 이 id를 추가 -->
 
-    <div class="home-heading">
-        {{ menu.name }}
-    </div> 
+        <div class="list-heading">
+            {{ menu.name }}
+        </div> 
 
-    <div class="list-content">
-        {% if menu.content and menu.content.strip() and menu.content != 'None' %}
-            {{ menu.content|safe }}  <!-- 콘텐츠가 있을 때 -->
-        {% else %}
-            <!-- 기본 콘텐츠를 여러 줄로 작성 -->
-            <div class="list-content">
-                <hr>
-                <p>
-                    <strong>1. President's Award for Educational Excellence</strong><br>
-                    <i>Date:</i> June 2022<br>
-                    <i>Description:</i> Recognized for outstanding academic achievements, maintaining a GPA of 4.0 throughout high school.
-                </p>
-                <hr>
-                <p>
-                    <strong>2. National Merit Scholar Finalist</strong><br>
-                    <i>Date:</i> May 2022<br>
-                    <i>Description:</i> Selected as a finalist for the National Merit Scholarship Program based on exemplary PSAT scores and academic performance.
-                </p>
-                <hr>
-                <p>
-                    <strong>3. 1st Place - Regional Science Fair</strong><br>
-                    <i>Date:</i> March 2021<br>
-                    <i>Description:</i> Awarded first place in the regional science fair for a project on renewable energy solutions, which focused on solar panel efficiency improvements.
-                </p>
-                <hr>
-                <p>
-                    <strong>4. Student Leadership Award</strong><br>
-                    <i>Date:</i> April 2022<br>
-                    <i>Description:</i> Received for demonstrating exceptional leadership as the President of the Student Council, organizing charity events and school improvement projects.
-                </p>
-                <hr>
-                <p>
-                    <strong>5. Excellence in Community Service Award</strong><br>
-                    <i>Date:</i> December 2021<br>
-                    <i>Description:</i> Awarded for completing over 150 hours of community service, including organizing food drives and volunteering at local shelters.
-                </p>
-                <hr>
-                <p>
-                    <strong>6. AP Scholar with Distinction</strong><br>
-                    <i>Date:</i> July 2022<br>
-                    <i>Description:</i> Recognized for scoring 5s on five or more AP exams, including AP Biology, AP Chemistry, and AP Calculus.
-                </p>
-                <hr>
-                <p>
-                    <strong>7. Varsity Soccer MVP</strong><br>
-                    <i>Date:</i> October 2021<br>
-                    <i>Description:</i> Named Most Valuable Player for leading the varsity soccer team to victory in the state championships.
-                </p>
-                <hr>
-                <p>
-                    <strong>8. Honorable Mention - National Art Competition</strong><br>
-                    <i>Date:</i> June 2020<br>
-                    <i>Description:</i> Received honorable mention for a painting submitted to a national-level art competition focused on cultural heritage.
-                </p>
-                <hr>
-                <p>
-                    <strong>9. Math Olympiad Silver Medalist</strong><br>
-                    <i>Date:</i> February 2021<br>
-                    <i>Description:</i> Earned a silver medal in the National Math Olympiad for solving complex problems in algebra and geometry.
-                </p>
-                <hr>
-                <p>
-                    &nbsp;
-                </p>
-                </div>
-
+        <div class="list-content">
+            {% if menu.content and menu.content.strip() and menu.content != 'None' %}
+                {{ menu.content|safe }}  <!-- 콘텐츠가 있을 때 -->
+            {% else %}
+                <!-- 기본 콘텐츠를 여러 줄로 작성 -->
+                <div class="list-content">
+                    <hr>
+                    <p>
+                        <strong>1. President's Award for Educational Excellence</strong><br>
+                        <i>Date:</i> June 2022<br>
+                        <i>Description:</i> Recognized for outstanding academic achievements, maintaining a GPA of 4.0 throughout high school.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>2. National Merit Scholar Finalist</strong><br>
+                        <i>Date:</i> May 2022<br>
+                        <i>Description:</i> Selected as a finalist for the National Merit Scholarship Program based on exemplary PSAT scores and academic performance.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>3. 1st Place - Regional Science Fair</strong><br>
+                        <i>Date:</i> March 2021<br>
+                        <i>Description:</i> Awarded first place in the regional science fair for a project on renewable energy solutions, which focused on solar panel efficiency improvements.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>4. Student Leadership Award</strong><br>
+                        <i>Date:</i> April 2022<br>
+                        <i>Description:</i> Received for demonstrating exceptional leadership as the President of the Student Council, organizing charity events and school improvement projects.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>5. Excellence in Community Service Award</strong><br>
+                        <i>Date:</i> December 2021<br>
+                        <i>Description:</i> Awarded for completing over 150 hours of community service, including organizing food drives and volunteering at local shelters.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>6. AP Scholar with Distinction</strong><br>
+                        <i>Date:</i> July 2022<br>
+                        <i>Description:</i> Recognized for scoring 5s on five or more AP exams, including AP Biology, AP Chemistry, and AP Calculus.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>7. Varsity Soccer MVP</strong><br>
+                        <i>Date:</i> October 2021<br>
+                        <i>Description:</i> Named Most Valuable Player for leading the varsity soccer team to victory in the state championships.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>8. Honorable Mention - National Art Competition</strong><br>
+                        <i>Date:</i> June 2020<br>
+                        <i>Description:</i> Received honorable mention for a painting submitted to a national-level art competition focused on cultural heritage.
+                    </p>
+                    <hr>
+                    <p>
+                        <strong>9. Math Olympiad Silver Medalist</strong><br>
+                        <i>Date:</i> February 2021<br>
+                        <i>Description:</i> Earned a silver medal in the National Math Olympiad for solving complex problems in algebra and geometry.
+                    </p>
+                    <hr>
+                    <p>
+                        &nbsp;
+                    </p>
+        </div>
+    </div>
         {% endif %}
 
 <!-- oEmbed 태그를 iframe으로 변환하는 스크립트 추가 -->
@@ -105,6 +106,51 @@
     });
 
     </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const captureElement = document.querySelector('#menu-content');  // 캡처 대상 요소 확인
+        const menuName = {{ menu.name|tojson }};  // 서버에서 메뉴 이름을 안전하게 가져옴
+
+        if (captureElement) {
+            html2canvas(captureElement).then(function(canvas) {
+                const dataUrl = canvas.toDataURL('image/jpeg');
+
+                // 서버로 캡처된 이미지 전송
+                fetch('/upload-thumbnail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        image: dataUrl,
+                        menu_name: menuName  // 현재 페이지의 동적 메뉴 이름
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Thumbnail saved successfully');
+                    } else {
+                        console.error('Error saving thumbnail:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch request failed:', error);
+                });
+            });
+        } else {
+            console.error('menu-content 요소가 페이지에 존재하지 않습니다.');
+        }
+    });
+    
+</script>
+
+
 </body>
 
 

@@ -25,13 +25,23 @@ def create_app():
     app = Flask(__name__)
     csrf.init_app(app)
 
-    app.config['SECRET_KEY'] = 'your_secret_key_here'  # 비밀 키 설정
+    # 비밀 키 설정 및 DB URI 설정
+    app.config['SECRET_KEY'] = 'your_secret_key_here'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://maybee:1234@localhost:5432/maybeedb'
-        # 파일 업로드 폴더 설정
-    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads')
 
+    # 파일 업로드 폴더 설정
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+    app.config['THUMBNAIL_FOLDER'] = os.path.join(app.root_path, 'static', 'thumbnails')
+
+    # 폴더가 없는 경우 생성
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
+    
+    if not os.path.exists(app.config['THUMBNAIL_FOLDER']):
+        os.makedirs(app.config['THUMBNAIL_FOLDER'])
+        app.logger.info(f'Thumbnail folder created at {app.config["THUMBNAIL_FOLDER"]}')
+
+
 
 
     # 로깅 설정
@@ -62,10 +72,7 @@ def create_app():
     from .routes import bp as main_bp  # 블루프린트 다시 'main'으로 임포트
     app.register_blueprint(main_bp)  # URL 프리픽스 없이 등록
 
-    # dist 폴더 내의 파일을 서빙할 수 있도록 경로 설정
-    @app.route('/dist/<path:filename>')
-    def dist_static(filename):
-        return send_from_directory('dist', filename)
+
 
 
 

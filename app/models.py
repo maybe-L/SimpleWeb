@@ -55,3 +55,13 @@ class Image(db.Model):
 
     def __repr__(self):
         return f'<Image {self.image_url} for Website {self.website_id}>'
+
+
+class Thumbnail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    thumbnail_url = db.Column(db.String(200), nullable=False)  # 섬네일 이미지 파일 경로
+    menu_id = db.Column(db.Integer, db.ForeignKey('menu.id'), nullable=False)  # 각 메뉴와 연결
+    menu = db.relationship('Menu', backref=db.backref('thumbnail', uselist=False))
+
+    def __repr__(self):
+        return f'<Thumbnail {self.thumbnail_url} for Menu {self.menu_id}>'

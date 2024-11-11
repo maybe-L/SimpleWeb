@@ -10,6 +10,9 @@ from flask_wtf import FlaskForm
 from wtforms import TextAreaField, HiddenField  # 여기에 필요한 필드들을 임포트
 from sqlalchemy.exc import IntegrityError
 from flask import send_from_directory
+import base64
+from io import BytesIO
+from PIL import Image
 
 
 
@@ -240,8 +243,8 @@ def menu_page(website_url, menu_name):
 # 각 메뉴 타입에 대한 기본 템플릿 콘텐츠
 default_content_templates = {
     'list': "<hr><p><strong>1. President's Award for Educational Excellence</strong><br><i>Date:</i> June 2022<br><i>Description:</i> Recognized for outstanding academic achievements, maintaining a GPA of 4.0 throughout high school.</p><hr><p><strong>2. National Merit Scholar Finalist</strong><br><i>Date:</i> May 2022<br><i>Description:</i> Selected as a finalist for the National Merit Scholarship Program based on exemplary PSAT scores and academic performance.</p><hr><p><strong>3. 1st Place - Regional Science Fair</strong><br><i>Date:</i> March 2021<br><i>Description:</i> Awarded first place in the regional science fair for a project on renewable energy solutions, which focused on solar panel efficiency improvements.</p><hr><p><strong>4. Student Leadership Award</strong><br><i>Date:</i> April 2022<br><i>Description:</i> Received for demonstrating exceptional leadership as the President of the Student Council, organizing charity events and school improvement projects.</p><hr><p><strong>5. Excellence in Community Service Award</strong><br><i>Date:</i> December 2021<br><i>Description:</i> Awarded for completing over 150 hours of community service, including organizing food drives and volunteering at local shelters.</p><hr><p><strong>6. AP Scholar with Distinction</strong><br><i>Date:</i> July 2022<br><i>Description:</i> Recognized for scoring 5s on five or more AP exams, including AP Biology, AP Chemistry, and AP Calculus.</p><hr><p><strong>7. Varsity Soccer MVP</strong><br><i>Date:</i> October 2021<br><i>Description:</i> Named Most Valuable Player for leading the varsity soccer team to victory in the state championships.</p><hr><p><strong>8. Honorable Mention - National Art Competition</strong><br><i>Date:</i> June 2020<br><i>Description:</i> Received honorable mention for a painting submitted to a national-level art competition focused on cultural heritage.</p><hr><p><strong>9. Math Olympiad Silver Medalist</strong><br><i>Date:</i> February 2021<br><i>Description:</i> Earned a silver medal in the National Math Olympiad for solving complex problems in algebra and geometry.</p><hr>",
-    'gallery': '<hr><figure class="media"><oembed url=\'https://youtu.be/9Bh9DJGPhG0\'></oembed></figure><p><strong>Title:</strong> <i>Modern Dance Ensemble - \'</i><strong>Lord of the Flies</strong><i>\'</i><br><i>Date:</i> February 2023<br><i>Description:</i> A modern dance piece performed as part of a collaborative group. Emphasized group dynamics, synchronization, and expressive movement.</p><hr><figure class="image"><img style="aspect-ratio:2100/1500;" src=\'http://127.0.0.1:5000/static/uploads/painting.jpg\' width=\'2100\' height=\'1500\'></figure><p><strong>Title:</strong> <i>Reflections of Identity</i></p><p><i>Medium:</i> Oil on Canvas<br><i>Dimensions:</i> 18 x 24 inches<br><i>Year:</i> 2023</p><hr><p>&nbsp;</p>',
-    'home': "<p><img src=\"http://127.0.0.1:5000/static/uploads/student.jpg\"> I am a diligent student who consistently strives to achieve both personal and academic growth. Throughout high school, I maintained strong relationships with my classmates, often serving as a mediator in group projects to ensure collaboration and harmony. As the president of the student council, I led initiatives such as organizing charity events and improving school facilities, which allowed me to develop strong leadership skills. Additionally, my commitment to community service is reflected in my volunteer work at local shelters, where I organized food drives and helped create after-school programs for underprivileged children. These experiences have deepened my desire to contribute to society and shaped my strong sense of responsibility and compassion for others.</p>"
+    'gallery': '<hr><figure class="image"><img style="aspect-ratio:2100/1500;" src=\'http://127.0.0.1:5000/static/uploads/painting.jpg\' width=\'2100\' height=\'1500\'></figure><p><strong>Title:</strong> <i>Reflections of Identity</i></p><p><i>Medium:</i> Oil on Canvas<br><i>Dimensions:</i> 18 x 24 inches<br><i>Year:</i> 2023</p><hr><figure class="media"><oembed url=\'https://youtu.be/0GsajWIF3ws\'></oembed></figure><p><strong>Title:</strong> <i>Modern Dance Ensemble - \'</i><strong>Lord of the Flies</strong><i>\'</i><br><i>Date:</i> February 2023<br><i>Description:</i> A modern dance piece performed as part of a collaborative group. Emphasized group dynamics, synchronization, and expressive movement.</p><hr>',
+    'home': "<p><img src=\"http://127.0.0.1:5000/static/uploads/student.jpg\"> Hello, my name is Emily White. I am a diligent student who consistently strives to achieve both personal and academic growth. Throughout high school, I maintained strong relationships with my classmates, often serving as a mediator in group projects to ensure collaboration and harmony. As the president of the student council, I led initiatives such as organizing charity events and improving school facilities, which allowed me to develop strong leadership skills. Additionally, my commitment to community service is reflected in my volunteer work at local shelters, where I organized food drives and helped create after-school programs for underprivileged children. These experiences have deepened my desire to contribute to society and shaped my strong sense of responsibility and compassion for others.</p>"
 }
 
 
@@ -350,26 +353,29 @@ def menu_editor(website_url, menu_name):
         return "Menu type not found", 404
 
 
-
 @bp.route('/<string:website_url>/edit-setup', methods=['GET', 'POST'])
 @login_required
 def edit_setup(website_url):
     form = WebsiteSetupForm()
 
+    # 현재 유저의 웹사이트 데이터를 가져옴
     user_website_data = UserWebsiteData.query.filter_by(user_id=current_user.id, website_url=website_url).first()
+
+    # 메뉴 데이터를 order 값으로 정렬하여 가져옴
     menus = Menu.query.filter_by(website_id=user_website_data.id).order_by(Menu.order).all()
 
     if form.validate_on_submit():
         website_name = form.website_name.data if form.website_name.data else user_website_data.website_name
-
-        # 웹사이트 이름이 변경된 경우 업데이트
         if user_website_data.website_name != website_name:
             user_website_data.website_name = website_name
 
         # 메뉴 데이터 처리
         submitted_menu_orders = []
+        duplicate_order_error = False  # 중복된 오더 값 확인용 플래그
         index = 1
+
         while True:
+            # 각 필드에서 데이터를 가져옴
             menu_name_field = f'menu_name_{index}'
             menu_type_field = f'menu_type_{index}'
             menu_order_field = f'menu_order_{index}'
@@ -377,44 +383,63 @@ def edit_setup(website_url):
             menu_type = request.form.get(menu_type_field)
             menu_order = request.form.get(menu_order_field)
 
+            # 메뉴 정보가 입력된 경우에만 처리
             if menu_name and menu_type and menu_order:
-                menu_order = int(menu_order)
-                submitted_menu_orders.append(menu_order)
-                menu = Menu.query.filter_by(website_id=user_website_data.id, order=menu_order).first()
+                try:
+                    menu_order = int(menu_order)
+                except ValueError:
+                    flash('Invalid menu order. Please provide a valid number.', 'danger')
+                    return redirect(url_for('main.edit_setup', website_url=website_url))
 
-                if menu:
-                    # 홈 메뉴의 경우 이름 수정 가능, 순서는 수정 불가
-                    if menu.order == 1:
-                        menu.name = menu_name  # 이름은 수정 가능
-                        menu.type = menu_type  # 타입 수정 가능
+                # 1번 메뉴는 항상 존재해야 하고 order는 1로 고정
+                if menu_order == 1:
+                    # 1번 메뉴가 이미 있는지 확인
+                    main_menu = Menu.query.filter_by(website_id=user_website_data.id, order=1).first()
+                    if not main_menu:
+                        flash('Main menu could not be set. Please try again.', 'danger')
+                        return redirect(url_for('main.edit_setup', website_url=website_url))
 
+                    # 홈 메뉴는 삭제하지 않고 이름과 타입만 수정 가능
+                    main_menu.name = menu_name
+                    main_menu.type = menu_type
+                else:
+                    # 중복된 order 값이 있는지 확인
+                    if menu_order in submitted_menu_orders:
+                        flash(f"Menu order {menu_order} is duplicated. Please provide unique order numbers for each menu.", 'danger')
+                        duplicate_order_error = True
+                        break
                     else:
-                        # 홈 메뉴가 아닌 경우 이름과 타입 모두 수정 가능
+                        submitted_menu_orders.append(menu_order)
+
+                    # 기존 메뉴를 가져와 업데이트
+                    menu = Menu.query.filter_by(website_id=user_website_data.id, order=menu_order).first()
+                    if menu:
                         menu.name = menu_name
                         menu.type = menu_type
                         menu.order = menu_order
+                    else:
+                        # 새로운 메뉴 추가
+                        new_menu = Menu(
+                            name=menu_name,
+                            type=menu_type,
+                            order=menu_order,
+                            website_id=user_website_data.id
+                        )
+                        db.session.add(new_menu)
 
-                    # 메뉴 순서는 이미 menu_order로 설정되어 있으므로 변경할 필요 없음
-                else:
-                    # 새로운 메뉴 추가
-                    new_menu = Menu(
-                        name=menu_name,
-                        type=menu_type,
-                        order=menu_order,
-                        website_id=user_website_data.id
-                    )
-                    db.session.add(new_menu)
                 index += 1
             else:
                 break
 
-        # 기존 메뉴 중 제출되지 않은 메뉴 삭제
+        # 중복된 오더 값이 있는 경우, 데이터베이스에 변경 사항을 커밋하지 않음
+        if duplicate_order_error:
+            return redirect(url_for('main.edit_setup', website_url=website_url))
+
+        # 기존 메뉴 중 제출되지 않은 메뉴 삭제 (1번 메뉴는 제외)
         existing_menus = Menu.query.filter_by(website_id=user_website_data.id).all()
         for menu in existing_menus:
-            if menu.order not in submitted_menu_orders:
-                # order가 1인 메뉴는 삭제하지 않음
-                if menu.order != 1:
-                    db.session.delete(menu)
+            if menu.order not in submitted_menu_orders and menu.order != 1:
+                db.session.delete(menu)
 
         db.session.commit()
 
@@ -426,23 +451,6 @@ def edit_setup(website_url):
 
     return render_template('setup.html', form=form, website_data=user_website_data, menus=menus, enumerate=enumerate)
 
-
-
-
-@bp.route('/save-home-content', methods=['POST'])
-@login_required
-def save_home_content():
-    content = request.form['content']  # CKEditor에서 전송된 데이터
-    user_website_data = UserWebsiteData.query.filter_by(user_id=current_user.id).first()
-
-    if user_website_data:
-        user_website_data.home_content = content  # CKEditor로 수정된 내용 저장
-        db.session.commit()
-        flash('Home content updated successfully!', 'success')
-    else:
-        flash('Error updating content.', 'danger')
-
-    return redirect(url_for('main.user_website', website_url=user_website_data.website_url))
 
 
 @bp.route('/<string:menu_name>/edit-content', methods=['POST'])
@@ -538,3 +546,41 @@ def save_edits():
         return jsonify({'status': 'error', 'message': 'Unauthorized or content not found'}), 403
 
 
+@bp.route('/upload-thumbnail', methods=['POST'])
+@login_required
+def upload_thumbnail():
+    current_app.logger.info("Thumbnail upload request received.")  # 요청 수신 확인 로그
+
+    try:
+        data = request.get_json()
+        image_data = data.get('image')
+        menu_name = data.get('menu_name')
+
+        if not image_data or not menu_name:
+            current_app.logger.error("Invalid data received - image or menu_name is missing.")
+            return jsonify({'success': False, 'message': 'Invalid data'}), 400
+
+        # 메뉴 이름을 소문자로 변환하고, 공백을 밑줄로 변경하여 안전한 파일명 생성
+        safe_menu_name = menu_name.replace(' ', '_').lower()
+        current_app.logger.info(f"Generated safe_menu_name: {safe_menu_name}")  # 디버깅 로그 추가
+
+        # Base64 문자열에서 이미지 데이터 추출
+        image_data = image_data.split(",")[1]
+        image = Image.open(BytesIO(base64.b64decode(image_data)))
+
+        # 썸네일 저장 경로 설정
+        thumbnail_path = os.path.join(current_app.config['THUMBNAIL_FOLDER'], f'thumbnail_{safe_menu_name}.jpg')
+
+        # 썸네일 폴더가 없으면 생성
+        if not os.path.exists(current_app.config['THUMBNAIL_FOLDER']):
+            os.makedirs(current_app.config['THUMBNAIL_FOLDER'])
+            current_app.logger.info(f"Thumbnail folder created at {current_app.config['THUMBNAIL_FOLDER']}")
+
+        # 이미지 저장
+        image.save(thumbnail_path, 'JPEG')
+        current_app.logger.info(f"Thumbnail saved at {thumbnail_path}")
+        return jsonify({'success': True}), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error in upload_thumbnail route: {e}")
+        return jsonify({'success': False, 'message': 'Error saving thumbnail'}), 500

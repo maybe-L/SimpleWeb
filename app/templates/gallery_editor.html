@@ -18,7 +18,7 @@
 
     <textarea name="content" id="editor">{{ content|safe }}</textarea>
     <input type="hidden" name="menu_id" value="{{ menu.id }}">
-    <button type="submit" id="save-button">Save</button>
+    <button type="submit" id="save-button" data-menu-name="{{ menu.name }}">Save</button>
 </form>
 {% endblock %}
 

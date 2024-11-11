@@ -63,28 +63,38 @@
 
         <!-- 기존에 저장된 메뉴들 표시 -->
         {% if website_data and website_data.menus %}
-            {% for index, menu in enumerate(website_data.menus, start=1) %}
-            <div class="menu-item" id="menu-item-{{ menu.order }}">
-                {% if menu.order == 1 %}
+            {% set sorted_menus = website_data.menus|sort(attribute='order') %}
+            {% for index, menu in enumerate(sorted_menus, start=1) %}
+                <div class="menu-item" id="menu-item-{{ menu.order }}">
+                    {% if menu.order == 1 %}
                         <!-- Home Page 메뉴 -->
+                        <!-- 메뉴 오더 필드 -->
+                        <label for="menu_order_{{ index }}">Order:</label>
+                        <input type="number" name="menu_order_{{ index }}" value="{{ menu.order }}" class="small-input" readonly>
+                        <br>
+                        <!-- 메뉴 이름 필드 -->
                         <label for="menu_name_{{ index }}">Home Page:</label>
                         <input type="text" name="menu_name_{{ index }}" value="{{ menu.name }}" class="small-input">
                         <br>
+                        <!-- 메뉴 타입 필드 -->
                         <label for="menu_type_{{ index }}">Menu Type:</label>
                         <select name="menu_type_{{ index }}" class="small-input">
                             <option value="home" {% if menu.type == 'home' %}selected{% endif %}>Home</option>
                             <option value="list" {% if menu.type == 'list' %}selected{% endif %}>List</option>
                             <option value="gallery" {% if menu.type == 'gallery' %}selected{% endif %}>Gallery</option>
                         </select>
-                        <br>
-                        <label for="menu_order_{{ index }}">Order:</label>
-                        <input type="number" name="menu_order_{{ index }}" value="{{ menu.order }}" class="small-input" readonly>
                         <br><br>
                     {% else %}
                         <!-- 기타 메뉴들 -->
+                        <!-- 메뉴 오더 필드 -->
+                        <label for="menu_order_{{ index }}">Order:</label>
+                        <input type="number" name="menu_order_{{ index }}" value="{{ menu.order }}" class="small-input">
+                        <br>
+                        <!-- 메뉴 이름 필드 -->
                         <label for="menu_name_{{ index }}">Menu {{ index }} Name:</label>
                         <input type="text" name="menu_name_{{ index }}" value="{{ menu.name }}" class="small-input" placeholder="Enter menu name">
                         <br>
+                        <!-- 메뉴 타입 필드 -->
                         <label for="menu_type_{{ index }}">Menu Type:</label>
                         <select name="menu_type_{{ index }}" class="small-input">
                             <option value="home" {% if menu.type == 'home' %}selected{% endif %}>Home</option>
@@ -92,14 +102,15 @@
                             <option value="gallery" {% if menu.type == 'gallery' %}selected{% endif %}>Gallery</option>
                         </select>
                         <br>
-                        <label for="menu_order_{{ index }}">Order:</label>
-                        <input type="number" name="menu_order_{{ index }}" value="{{ menu.order }}" class="small-input">
-
-                        <!-- 메뉴 삭제 버튼 -->
+                        <!-- 삭제 버튼 -->
                         <button type="button" class="delete-menu-button" data-index="{{ index }}">Delete Menu</button>
                         <br><br>
                     {% endif %}
                 </div>
+                {% if not loop.last %}
+                    <!-- 메뉴 사이에 horizontal line 추가 (마지막 메뉴는 제외) -->
+                    <hr>
+                {% endif %}
             {% endfor %}
         {% endif %}
     </div> <!-- 메뉴 컨테이너 끝 -->
@@ -124,6 +135,7 @@
 
 <!-- 자바스크립트 파일 로드 -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 
 
 {% endblock %}

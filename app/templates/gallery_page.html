@@ -3,6 +3,7 @@
 {% block content %}
 
 <body class="template-gallery">
+    <div id="menu-content">  <!-- 이 id를 추가 -->
 
 
     <div class="gallery-heading">
@@ -15,15 +16,7 @@
                 <!-- 기본 콘텐츠를 여러 줄로 작성 -->
                 <div class="gallery-content">
                     <hr>
-                    <figure class="media">
-                        <oembed url="https://youtu.be/9Bh9DJGPhG0"></oembed>
-                    </figure>
-                    <p>
-                        <strong>Title:</strong> <i>Modern Dance Ensemble - "</i><strong>Lord of the Flies</strong><i>"</i><br>
-                        <i>Date:</i> February 2023<br>
-                        <i>Description:</i> A modern dance piece performed as part of a collaborative group. Emphasized group dynamics, synchronization, and expressive movement.
-                    </p>
-                    <hr>
+
                     <figure class="image">
                         <img style="aspect-ratio:2100/1500;" src="http://127.0.0.1:5000/static/uploads/painting.jpg" width="2100" height="1500">
                     </figure>
@@ -35,13 +28,27 @@
                         <i>Dimensions:</i> 18 x 24 inches<br>
                         <i>Year:</i> 2023
                     </p>
+
                     <hr>
+
+                    <figure class="media">
+                        <oembed url="https://youtu.be/0GsajWIF3ws"></oembed>
+                    </figure>
                     <p>
-                        &nbsp;
+                        <strong>Title:</strong> <i>Modern Dance Ensemble - "</i><strong>Lord of the Flies</strong><i>"</i><br>
+                        <i>Date:</i> February 2023<br>
+                        <i>Description:</i> A modern dance piece performed as part of a collaborative group. Emphasized group dynamics, synchronization, and expressive movement.
                     </p>
-            {% endif %}
+
+
+                    <hr>
+
+
         </div>
     </div>
+</div>
+
+{% endif %}
 
 <!-- oEmbed 태그를 iframe으로 변환하는 스크립트 추가 -->
     <script>
@@ -71,6 +78,49 @@
     });
 
     </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const captureElement = document.querySelector('#menu-content');  // 캡처 대상 요소 확인
+        const menuName = {{ menu.name|tojson }};  // 서버에서 메뉴 이름을 안전하게 가져옴
+
+        if (captureElement) {
+            html2canvas(captureElement).then(function(canvas) {
+                const dataUrl = canvas.toDataURL('image/jpeg');
+
+                // 서버로 캡처된 이미지 전송
+                fetch('/upload-thumbnail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        image: dataUrl,
+                        menu_name: menuName  // 현재 페이지의 동적 메뉴 이름
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Thumbnail saved successfully');
+                    } else {
+                        console.error('Error saving thumbnail:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch request failed:', error);
+                });
+            });
+        } else {
+            console.error('menu-content 요소가 페이지에 존재하지 않습니다.');
+        }
+    });
+    
+</script>
 
 </body>
 
