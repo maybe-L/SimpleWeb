@@ -15,6 +15,10 @@
 <form id="ckeditor-form" method="POST" 
     action="{% if menu.order == 1 %}{{ url_for('main.main_menu_editor', website_url=website_data.website_url) }}{% else %}{{ url_for('main.menu_editor', website_url=website_data.website_url, menu_name=menu.name) }}{% endif %}">
     {{ form.hidden_tag() }}  <!-- CSRF 토큰을 포함하는 hidden_tag() -->
+    <p class="editor-instruction">
+        <B>After making changes to this page, click the "Save" button down below to store your updates.</B>
+        <BR>When you have finished editing and saving all pages, click the "Publish & Exit Edit Mode" button at the top to apply all changes to the website.
+    </p>
 
     <textarea name="content" id="editor">{{ content|safe }}</textarea>
     <input type="hidden" name="menu_id" value="{{ menu.id }}">
@@ -56,13 +60,14 @@ import {
     TableColumnResize,
     TableProperties,
     TableToolbar,
-    HorizontalLine
+    HorizontalLine,
+    Alignment
 } from 'ckeditor5';
 
 ClassicEditor
     .create(document.querySelector('#editor'), {
         plugins: [
-            Essentials, Paragraph, Bold, Italic, Font,
+            Essentials, Paragraph, Bold, Italic, Font, Alignment,
             Image, ImageToolbar, ImageCaption, ImageResize, ImageUpload, MediaEmbed,
             SimpleUploadAdapter, SourceEditing, ImageStyle,
             Table, TableCaption, TableCellProperties, TableColumnResize,
@@ -70,12 +75,15 @@ ClassicEditor
         ],
         toolbar: [
             'undo', 'redo', '|', 'bold', 'italic', '|', 'fontSize', 'fontFamily', 
-            'fontColor', 'fontBackgroundColor', '|', 'imageUpload', 'mediaEmbed', 
-            '|', 'insertTable', '|', 'sourceEditing', '|', 'horizontalLine'
+            'fontColor', 'fontBackgroundColor', '|', 'alignment', // Alignment 도구 추가
+            'imageUpload', 'mediaEmbed', '|', 'horizontalLine', '|', 'sourceEditing'
         ],
+        alignment: {
+            options: [ 'left', 'center', 'right', 'justify' ] // 정렬 옵션 설정
+        },
         image: {
             toolbar: [
-                'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', '|', 'resizeImage'
+                'imageStyle:inline', 'imageStyle:alignCenter', 'imageStyle:wrapText', '|', 'resizeImage'
             ]
         },
         simpleUpload: {

@@ -363,14 +363,39 @@ aside img {
     height: auto;
 }
 
+/* footer 스타일 - main 아래에 위치하도록 설정 */
+.footer {
+    grid-column: 2; /* 오른쪽 main 영역 아래로 정렬 */
+    padding: 70px 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left {
+    display: flex; /* 왼쪽 영역을 가로 정렬 */
+    align-items: center; /* 세로 정렬 */
+    gap: 10px; /* 웹사이트 이름과 Logout 간 간격 */
+}
+
+.footer-auth-status {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+
+}
 
 
 /* 링크 스타일 */
 a {
     color: #5a5a5a;
     text-align: left;
-    display: block;
-    font-size: 12px;
+    display: inline; /* 또는 inline-block */
+    font-size: 16px;
 }
 
 .edit-mode #thumbnail-list {
@@ -501,8 +526,46 @@ img {
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
 
+.home-content .text-tiny {
+    font-size: 10px; /* 원하는 크기로 설정 */
+}
+
+.home-content .text-small {
+    font-size: 14px; /* 원하는 크기로 설정 */
+}
+
+.home-content .text-default {
+    font-size: 16px; /* 원하는 크기로 설정 */
+}
+
+.home-content .text-big {
+    font-size: 20px; /* 원하는 크기로 설정 */
+}
+
 .home-content .text-huge {
     font-size: 24px; /* 원하는 크기로 설정 */
+}
+
+/* 이미지 왼쪽 정렬 */
+.home-content .image-style-align-left {
+    float: left;         /* 이미지가 왼쪽에 정렬되도록 설정 */
+    margin-right: 15px;  /* 이미지 오른쪽에 여백 추가 */
+    max-width: 50%;      /* 이미지 크기를 부모 요소의 50%로 제한 (필요에 따라 조정) */
+}
+
+/* 이미지 오른쪽 정렬 */
+.home-content .image-style-align-right {
+    float: right;        /* 이미지가 오른쪽에 정렬되도록 설정 */
+    margin-left: 15px;   /* 이미지 왼쪽에 여백 추가 */
+    max-width: 50%;      /* 이미지 크기를 부모 요소의 50%로 제한 (필요에 따라 조정) */
+}
+
+/* 이미지 가운데 정렬 */
+.home-content .image-style-align-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
 }
 
 .list-heading {
@@ -518,14 +581,46 @@ img {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
-.list-content hr {
-    position: relative;
-    z-index: 1; /* 기본 z-index 설정 */
+.list-content .text-tiny {
+    font-size: 10px; /* 원하는 크기로 설정 */
 }
 
-.list-content p {
-    position: relative;
-    z-index: 10; /* hr보다 높은 z-index 설정 */
+.list-content .text-small {
+    font-size: 14px; /* 원하는 크기로 설정 */
+}
+
+.list-content .text-default {
+    font-size: 16px; /* 원하는 크기로 설정 */
+}
+
+.list-content .text-big {
+    font-size: 20px; /* 원하는 크기로 설정 */
+}
+
+.list-content .text-huge {
+    font-size: 24px; /* 원하는 크기로 설정 */
+}
+
+/* 이미지 왼쪽 정렬 */
+.list-content .image-style-align-left {
+    float: left;         /* 이미지가 왼쪽에 정렬되도록 설정 */
+    margin-right: 15px;  /* 이미지 오른쪽에 여백 추가 */
+    max-width: 50%;      /* 이미지 크기를 부모 요소의 50%로 제한 (필요에 따라 조정) */
+}
+
+/* 이미지 오른쪽 정렬 */
+.list-content .image-style-align-right {
+    float: right;        /* 이미지가 오른쪽에 정렬되도록 설정 */
+    margin-left: 15px;   /* 이미지 왼쪽에 여백 추가 */
+    max-width: 50%;      /* 이미지 크기를 부모 요소의 50%로 제한 (필요에 따라 조정) */
+}
+
+/* 이미지 가운데 정렬 */
+.list-content .image-style-align-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
 }
 
 
@@ -539,23 +634,52 @@ img {
 .gallery-content {
     padding-left: 20px;
     padding-right: 50px;
+    font-size: 16px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     max-width: 800px; /* 텍스트 컨테이너의 최대 너비를 설정 */
     margin: 0 auto 0 0; /* 왼쪽에 고정되도록 하고, 우측 여백 없애기 */
     text-align: left; /* 텍스트 왼쪽 정렬 */
 }
 
+.gallery-content .text-tiny {
+    font-size: 10px; /* 원하는 크기로 설정 */
+}
+
+.gallery-content .text-small {
+    font-size: 14px; /* 원하는 크기로 설정 */
+}
+
+.gallery-content .text-default {
+    font-size: 16px; /* 원하는 크기로 설정 */
+}
+
+.gallery-content .text-big {
+    font-size: 20px; /* 원하는 크기로 설정 */
+}
+
+.gallery-content .text-huge {
+    font-size: 24px; /* 원하는 크기로 설정 */
+}
 
 /* 홈 템플릿 이미지 스타일 */
 .template-home img {
-    width: 100%; /* 가로 너비를 부모 요소에 맞춤 */
     height: auto; /* 세로 높이를 자동으로 맞춰 비율 유지 */
     object-fit: contain; /* 이미지가 깨지지 않도록 비율 유지 */
-    min-width: 300px; /* 최소 너비 설정 */
-    max-width: 600px; /* 최대 너비 설정 */
     display: block; /* 이미지가 텍스트 위에 블록처럼 배치되게 설정 */
-    margin: 30px 0; /* 이미지 위아래 여백 설정, 좌우 여백 없음 */
-    clear: both; /* 이미지 위에 떠 있는 요소가 있더라도 이미지 아래로 내림 */
+}
+
+/* 이미지 오른쪽 정렬: 텍스트가 왼쪽에 배치되도록 */
+.template-home .image-style-align-right {
+    float: right; /* 이미지 오른쪽 정렬 */
+    margin-left: 15px; /* 이미지 왼쪽에 여백 추가 */
+    max-width: 50%; /* 이미지 크기 조절 */
+}
+
+/* 이미지 왼쪽 정렬: 텍스트가 오른쪽에 배치되도록 */
+.template-home .image-style-align-left {
+    float: left; /* 이미지 왼쪽 정렬 */
+    margin-right: 15px; /* 이미지 오른쪽에 여백 추가 */
+    max-width: 50%; /* 이미지 크기 조절 */
 }
 
 /* 리스트 템플릿 이미지 스타일 */
@@ -563,11 +687,24 @@ img {
     width: 100%; /* 가로 너비를 부모 요소에 맞춤 */
     height: auto; /* 세로 높이를 자동으로 맞춰 비율 유지 */
     object-fit: contain; /* 이미지가 깨지지 않도록 비율 유지 */
-    min-width: 300px; /* 최소 너비 설정 */
+    min-width: 100px; /* 최소 너비 설정 */
     max-width: 600px; /* 최대 너비 설정 */
     display: block; /* 이미지가 텍스트 위에 블록처럼 배치되게 설정 */
-    margin: 30px 0; /* 이미지 위아래 여백 설정, 좌우 여백 없음 */
-    clear: both; /* 이미지 위에 떠 있는 요소가 있더라도 이미지 아래로 내림 */
+
+}
+
+/* 이미지 오른쪽 정렬: 텍스트가 왼쪽에 배치되도록 */
+.template-list .image-style-align-right {
+    float: right; /* 이미지 오른쪽 정렬 */
+    margin-left: 15px; /* 이미지 왼쪽에 여백 추가 */
+    max-width: 50%; /* 이미지 크기 조절 */
+}
+
+/* 이미지 왼쪽 정렬: 텍스트가 오른쪽에 배치되도록 */
+.template-list .image-style-align-left {
+    float: left; /* 이미지 왼쪽 정렬 */
+    margin-right: 15px; /* 이미지 오른쪽에 여백 추가 */
+    max-width: 50%; /* 이미지 크기 조절 */
 }
 
 /* 갤러리 템플릿 이미지 스타일 */
@@ -575,10 +712,35 @@ img {
     width: 100%; /* 가로 너비를 부모 요소에 맞춤 */
     height: auto; /* 세로 높이를 자동으로 맞춰 비율 유지 */
     object-fit: contain; /* 이미지가 깨지지 않도록 비율 유지 */
-    min-width: 300px; /* 최소 너비 설정 */
+    min-width: 100px; /* 최소 너비 설정 */
     max-width: 600px; /* 최대 너비 설정 */
     display: block; /* 이미지가 텍스트 위에 블록처럼 배치되게 설정 */
-    margin: 30px 0; /* 이미지 위아래 여백 설정, 좌우 여백 없음 */
-    clear: both; /* 이미지 위에 떠 있는 요소가 있더라도 이미지 아래로 내림 */
+
+}
+
+/* 이미지 오른쪽 정렬: 텍스트가 왼쪽에 배치되도록 */
+.template-gallery .image-style-align-right {
+    float: right; /* 이미지 오른쪽 정렬 */
+    margin-left: 15px; /* 이미지 왼쪽에 여백 추가 */
+    max-width: 50%; /* 이미지 크기 조절 */
+}
+
+/* 이미지 왼쪽 정렬: 텍스트가 오른쪽에 배치되도록 */
+.template-gallery .image-style-align-left {
+    float: left; /* 이미지 왼쪽 정렬 */
+    margin-right: 15px; /* 이미지 오른쪽에 여백 추가 */
+    max-width: 50%; /* 이미지 크기 조절 */
+}
+
+/* 하이라이트 스타일 */
+#thumbnail-list li.highlight a {
+    color: #007bff; /* 텍스트 색상 */
+    font-weight: bold; /* 텍스트 굵기 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+#thumbnail-list li.highlight img {
+    border: 2px solid #007bff; /* 섬네일 테두리 색상 */
+    border-radius: 5px; /* 모서리 둥글게 */
 }
 

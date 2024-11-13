@@ -14,7 +14,7 @@
     <!-- 웹사이트 주소 입력란 -->
     <label for="website_url">
         <h3>Website Address:</h3>
-        www.collegeprofile.com/
+        www.storybehind.me/
         {% if website_data %}
             <input type="text" id="website-url" name="website_url" class="small-input" value="{{ website_data.website_url }}" readonly>
         {% else %}
@@ -45,6 +45,9 @@
         <!-- 초기 설정 시 Home Page 메뉴 추가 -->
         {% if not website_data %}
             <div class="menu-item" id="menu-item-1">
+                <label for="menu_order_1">Order:</label>
+                <input type="number" name="menu_order_1" value="1" class="small-input" readonly> <!-- order 고정 -->
+                <br>
                 <label for="menu_name_1">Home Page:</label>
                 <input type="text" name="menu_name_1" value="" class="small-input" placeholder="Enter home menu name"> <!-- 이름 수정 가능 -->
                 <br>
@@ -54,9 +57,8 @@
                     <option value="list">List</option>
                     <option value="gallery">Gallery</option>
                 </select>
-                <br>
-                <label for="menu_order_1">Order:</label>
-                <input type="number" name="menu_order_1" value="1" class="small-input" readonly> <!-- order 고정 -->
+
+
                 <br><br>
             </div>
         {% endif %}

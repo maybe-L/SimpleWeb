@@ -15,6 +15,10 @@
 <form id="ckeditor-form" method="POST" 
     action="{% if menu.order == 1 %}{{ url_for('main.main_menu_editor', website_url=website_data.website_url) }}{% else %}{{ url_for('main.menu_editor', website_url=website_data.website_url, menu_name=menu.name) }}{% endif %}">
     {{ form.hidden_tag() }}  <!-- CSRF 토큰을 포함하는 hidden_tag() -->
+    <p class="editor-instruction">
+        <B>After making changes to this page, click the "Save" button down below to store your updates.</B>
+        <BR>When you have finished editing and saving all pages, click the "Publish & Exit Edit Mode" button at the top to apply all changes to the website.
+    </p>
 
     <textarea name="content" id="editor">{{ content|safe }}</textarea>
     <input type="hidden" name="menu_id" value="{{ menu.id }}">
@@ -75,24 +79,11 @@
 
             ],
             toolbar: [
-                'undo', 'redo', '|',
-                'bold', 'italic', '|',
-                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-                'imageUpload', 'mediaEmbed', '|', 'insertTable', '|',
-                'sourceEditing', '|',
-                'horizontalLine' /* 툴바에 수평선 버튼 추가 */
+            'undo', 'redo', '|', 'bold', 'italic', '|', 'fontSize', 'fontFamily', 
+            'fontColor', 'fontBackgroundColor', '|', 'imageUpload', 'mediaEmbed', 
+            '|', 'horizontalLine', '|', 'sourceEditing',
+        ],
 
-            ],
-
-            image: {
-            toolbar: [
-                'imageStyle:inline',
-                'imageStyle:wrapText',
-                'imageStyle:breakText',
-                '|',
-                'resizeImage'
-            ]
-        },
 
             simpleUpload: {
                 uploadUrl: '/upload-image',

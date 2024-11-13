@@ -10,6 +10,8 @@ import os
 
 import logging
 from logging.handlers import RotatingFileHandler
+from dotenv import load_dotenv
+
 
 
 
@@ -25,9 +27,12 @@ def create_app():
     app = Flask(__name__)
     csrf.init_app(app)
 
-    # 비밀 키 설정 및 DB URI 설정
-    app.config['SECRET_KEY'] = 'your_secret_key_here'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://maybee:1234@localhost:5432/maybeedb'
+    # .env 파일에서 환경 변수 로드
+    load_dotenv()
+
+    # 비밀 키 및 데이터베이스 URI 설정
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///default.db')
 
     # 파일 업로드 폴더 설정
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')

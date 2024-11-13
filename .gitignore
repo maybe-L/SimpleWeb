@@ -1,4 +1,16 @@
-node_modules
-node_modules
-node_modules
-node_modules
+# Python virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Cache files
+__pycache__/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Log files and temporary files
+*.log
+tmp/

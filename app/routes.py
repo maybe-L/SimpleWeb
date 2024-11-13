@@ -243,7 +243,7 @@ def menu_page(website_url, menu_name):
 # 각 메뉴 타입에 대한 기본 템플릿 콘텐츠
 default_content_templates = {
     'list': "<hr><p><strong>1. President's Award for Educational Excellence</strong><br><i>Date:</i> June 2022<br><i>Description:</i> Recognized for outstanding academic achievements, maintaining a GPA of 4.0 throughout high school.</p><hr><p><strong>2. National Merit Scholar Finalist</strong><br><i>Date:</i> May 2022<br><i>Description:</i> Selected as a finalist for the National Merit Scholarship Program based on exemplary PSAT scores and academic performance.</p><hr><p><strong>3. 1st Place - Regional Science Fair</strong><br><i>Date:</i> March 2021<br><i>Description:</i> Awarded first place in the regional science fair for a project on renewable energy solutions, which focused on solar panel efficiency improvements.</p><hr><p><strong>4. Student Leadership Award</strong><br><i>Date:</i> April 2022<br><i>Description:</i> Received for demonstrating exceptional leadership as the President of the Student Council, organizing charity events and school improvement projects.</p><hr><p><strong>5. Excellence in Community Service Award</strong><br><i>Date:</i> December 2021<br><i>Description:</i> Awarded for completing over 150 hours of community service, including organizing food drives and volunteering at local shelters.</p><hr><p><strong>6. AP Scholar with Distinction</strong><br><i>Date:</i> July 2022<br><i>Description:</i> Recognized for scoring 5s on five or more AP exams, including AP Biology, AP Chemistry, and AP Calculus.</p><hr><p><strong>7. Varsity Soccer MVP</strong><br><i>Date:</i> October 2021<br><i>Description:</i> Named Most Valuable Player for leading the varsity soccer team to victory in the state championships.</p><hr><p><strong>8. Honorable Mention - National Art Competition</strong><br><i>Date:</i> June 2020<br><i>Description:</i> Received honorable mention for a painting submitted to a national-level art competition focused on cultural heritage.</p><hr><p><strong>9. Math Olympiad Silver Medalist</strong><br><i>Date:</i> February 2021<br><i>Description:</i> Earned a silver medal in the National Math Olympiad for solving complex problems in algebra and geometry.</p><hr>",
-    'gallery': '<hr><figure class="image"><img style="aspect-ratio:2100/1500;" src=\'http://127.0.0.1:5000/static/uploads/painting.jpg\' width=\'2100\' height=\'1500\'></figure><p><strong>Title:</strong> <i>Reflections of Identity</i></p><p><i>Medium:</i> Oil on Canvas<br><i>Dimensions:</i> 18 x 24 inches<br><i>Year:</i> 2023</p><hr><figure class="media"><oembed url=\'https://youtu.be/0GsajWIF3ws\'></oembed></figure><p><strong>Title:</strong> <i>Modern Dance Ensemble - \'</i><strong>Lord of the Flies</strong><i>\'</i><br><i>Date:</i> February 2023<br><i>Description:</i> A modern dance piece performed as part of a collaborative group. Emphasized group dynamics, synchronization, and expressive movement.</p><hr>',
+    'gallery': '<hr><figure class="image"><img style="aspect-ratio:2100/1500;" src=\'http://127.0.0.1:5000/static/uploads/painting.jpg\' width=\'2100\' height=\'1500\'></figure><p><strong>Title:</strong> <i>Reflections of Identity</i></p><p><i>Medium:</i> Oil on Canvas<br><i>Dimensions:</i> 18 x 24 inches<br><i>Year:</i> 2023</p><hr><figure class="media"><oembed url=\'https://youtu.be/0GsajWIF3ws\'></oembed></figure><p><strong>Title:</strong> <i>Modern Dance Ensemble - \'</i><strong>Swan Lake</strong><i>\'</i><br><i>Date:</i> February 2023<br><i>Description:</i> A modern dance piece performed as part of a collaborative group. Emphasized group dynamics, synchronization, and expressive movement.</p><hr>',
     'home': "<p><img src=\"http://127.0.0.1:5000/static/uploads/student.jpg\"> Hello, my name is Emily White. I am a diligent student who consistently strives to achieve both personal and academic growth. Throughout high school, I maintained strong relationships with my classmates, often serving as a mediator in group projects to ensure collaboration and harmony. As the president of the student council, I led initiatives such as organizing charity events and improving school facilities, which allowed me to develop strong leadership skills. Additionally, my commitment to community service is reflected in my volunteer work at local shelters, where I organized food drives and helped create after-school programs for underprivileged children. These experiences have deepened my desire to contribute to society and shaped my strong sense of responsibility and compassion for others.</p>"
 }
 
@@ -251,107 +251,85 @@ default_content_templates = {
 @bp.route('/<string:website_url>/editor', methods=['GET', 'POST'])
 @login_required
 def main_menu_editor(website_url):
-    # Get the website data
+    # 웹사이트 데이터 가져오기
     user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
-
-    # 첫 번째 메뉴(order=1)를 메인 페이지로 사용
     main_menu = Menu.query.filter_by(website_id=user_website_data.id, order=1).first()
 
-    # 폼을 초기화
     form = MenuEditForm()
 
     if request.method == 'POST':
         if form.validate_on_submit():
             content = form.content.data
             if content:
-                main_menu.content = content  # 메뉴의 내용을 저장
-                # 메뉴의 순서는 건드리지 않음
+                main_menu.content = content
                 db.session.commit()
                 flash('Main page content saved!', 'success')
             else:
                 flash('No content provided.', 'danger')
-
-        # 저장 후에도 에디터 모드에 남아있음
         return redirect(url_for('main.main_menu_editor', website_url=website_url))
 
-    # 메뉴의 콘텐츠가 없거나 'None'이면, 기본 템플릿 콘텐츠를 사용(추가부분 - 혹시 에러나면 이거지워!!!!!!!!)
     content = main_menu.content if main_menu.content and main_menu.content != 'None' else default_content_templates.get(main_menu.type, '')
-    
+    form.content.data = content if content != 'None' else ''
 
-
-        # 메뉴의 콘텐츠가 없으면 기본 템플릿을 폼에 채움
-    if not main_menu.content or main_menu.content == 'None':
-        form.content.data = default_content_templates.get(main_menu.type, '')
-    else:
-        form.content.data = main_menu.content
-
-    # 메뉴의 콘텐츠가 없거나, 유저가 'None'을 입력한 경우 기본 템플릿을 폼에 채움
-    if not main_menu.content or main_menu.content.strip().lower() == 'none':
-        form.content.data = default_content_templates.get(main_menu.type, '')
-    else:
-        form.content.data = main_menu.content
-
-
-    # 메뉴 타입에 따라 템플릿 결정
+    # 템플릿 결정
     template_mapping = {
         'list': 'list_editor.html',
         'gallery': 'gallery_editor.html',
         'home': 'home_editor.html'
     }
-
     template = template_mapping.get(main_menu.type)
 
     if template:
-        return render_template(template, website_data=user_website_data, menu=main_menu, content=form.content.data, body_class='edit-mode', form=form)
+        return render_template(
+            template, 
+            website_data=user_website_data, 
+            menu=main_menu, 
+            content=form.content.data, 
+            body_class='edit-mode', 
+            form=form,
+            current_menu_order=main_menu.order  # current_menu_order 전달
+        )
     else:
         return "Menu type not found", 404
-
 
 @bp.route('/<string:website_url>/<string:menu_name>/editor', methods=['GET', 'POST'])
 @login_required
 def menu_editor(website_url, menu_name):
     form = MenuEditForm()
-
-    # Get website and menu data
     user_website_data = UserWebsiteData.query.filter_by(website_url=website_url).first_or_404()
     menu = Menu.query.filter(Menu.website_id == user_website_data.id, Menu.name.ilike(menu_name)).first_or_404()
 
-
     if form.validate_on_submit():
-        # Save edited content for the selected menu
         content = form.content.data
         if content:
-            menu.content = content  # 메뉴의 내용을 저장
-            # 메뉴의 순서는 건드리지 않음
+            menu.content = content
             db.session.commit()
             flash('Changes saved!', 'success')
-
         return redirect(url_for('main.menu_editor', website_url=website_url, menu_name=menu_name))
-    
-        # 에디터에서 내용을 표시할 때 템플릿 기본 내용이 없으면 기본 콘텐츠를 보여줌 content = menu.content if menu.content and menu.content != 'None' else ''
-        # 메뉴의 콘텐츠가 없거나 'None'이면, 기본 템플릿 콘텐츠를 사용 
+
     content = menu.content if menu.content and menu.content != 'None' else default_content_templates.get(menu.type, '')
+    form.content.data = content if content != 'None' else ''
 
-        # 메뉴의 콘텐츠가 없으면 기본 템플릿을 폼에 채움
-    if not menu.content or menu.content == 'None':
-        form.content.data = default_content_templates.get(menu.type, '')
-    else:
-        form.content.data = menu.content
-
-    # 메뉴의 타입에 따라 다른 템플릿을 사용
     template_mapping = {
         'list': 'list_editor.html',
         'gallery': 'gallery_editor.html',
         'home': 'home_editor.html'
     }
-
     template = template_mapping.get(menu.type)
 
     if template:
-        return render_template(template, website_data=user_website_data, menu=menu, content=form.content.data, body_class='edit-mode', form=form)
+        return render_template(
+            template, 
+            website_data=user_website_data, 
+            menu=menu, 
+            content=form.content.data, 
+            body_class='edit-mode', 
+            form=form,
+            current_menu_order=menu.order  # current_menu_order 전달
+        )
     else:
         return "Menu type not found", 404
-
+    
 
 @bp.route('/<string:website_url>/edit-setup', methods=['GET', 'POST'])
 @login_required

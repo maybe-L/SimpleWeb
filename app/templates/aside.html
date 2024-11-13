@@ -1,17 +1,32 @@
-<aside id="thumbnail-list">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
+<aside id="thumbnail-list" data-current-menu="{{ current_menu_order }}">
     <h3>Pages</h3>
     <ul>
         {% set sorted_menus = website_data.menus|sort(attribute='order') %}
         {% for menu in sorted_menus %}
-            <li>
+            <li data-menu-order="{{ menu.order }}" class="{% if menu.order == current_menu_order %}highlight{% endif %}">
+                <!-- editor 모드 경로로 링크 변경 -->
                 <a href="{{ url_for('main.menu_editor', website_url=website_data.website_url, menu_name=menu.name|lower) }}">
                     <p>{{ menu.name }}</p>
                     <img src="{{ url_for('static', filename='thumbnails/thumbnail_' + menu.name.replace(' ', '_')|lower + '.jpg') }}" 
                     alt="{{ menu.name }}" 
                     onerror="this.onerror=null;this.src='/static/images/placeholder.jpg';">
-               
                 </a>
             </li>
         {% endfor %}
     </ul>
 </aside>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const currentMenuOrder = document.getElementById("thumbnail-list").getAttribute("data-current-menu");
+
+        document.querySelectorAll("#thumbnail-list li").forEach(item => {
+            if (item.getAttribute("data-menu-order") === currentMenuOrder) {
+                item.classList.add("highlight");
+            }
+        });
+    });
+</script>

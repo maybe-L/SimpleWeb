@@ -1,3 +1,28 @@
-<footer>
-    <p>&copy; {% if website_data %}{{ website_data.website_name }}{% else %}Your Website{% endif %}</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
+<footer class="footer">
+    <!-- 왼쪽에 웹사이트 이름과 로그인 링크 -->
+    <div class="footer-left">
+        <p style="margin: 0;">
+            {% if website_data %}
+                {{ website_data.website_name }}
+            {% else %}
+                Your Website
+            {% endif %}
+        </p>
+        <ul class="footer-auth-status">
+            {% if not current_user.is_authenticated %}
+                <li><a href="{{ url_for('main.login') }}">Login</a></li>
+            {% else %}
+                <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- 오른쪽 끝에 Proudly powered by 문구 -->
+    <div class="footer-right">
+        Proudly powered by&nbsp;<a href="https://storybehind.me" target="_blank">storybehind.me</a>
+    </div>
 </footer>
+
