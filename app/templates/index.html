@@ -1,12 +1,20 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 {% block content %}
-    <h1 class="header-title">Welcome! </h1> 
-
-    <div style="text-align: center;"> <!-- 가운데 정렬 -->
-        You’re at the easiest spot to make a website. <br> I’ll help you get yours up in no time.  <br> Let’s get started!<br><br><br>
-
-        <a href="{{ url_for('main.register') }}" class="btn">Register</a>
-        <a href="{{ url_for('main.login') }}" class="btn">Login</a>
+    <div class="index-container">
+        <!-- 왼쪽 일러스트 영역 -->
+        <div class="animated-image-container">
+            <img src="{{ url_for('static', filename='images/story-image.jpg') }}" alt="Story behind me" class="animated-image">
+        </div>
+        
+        <!-- 오른쪽 텍스트 및 버튼 영역 -->
+        <div class="text-content">
+            <h1 class="index-header-title">Welcome!</h1>
+            <p>You’re at the easiest spot to make a website. <br> I’ll help you get yours up in no time. <br> Let’s get started!</p>
+            <div class="button-container">
+                <a href="{{ url_for('main.register') }}" class="btn">Start Your Website</a>
+                <a href="{{ url_for('main.login') }}" class="btn">Login</a>
+            </div>
+        </div>
     </div>
 {% endblock %}

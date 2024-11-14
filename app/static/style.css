@@ -1,4 +1,82 @@
-/* 고딕체 헤더 스타일 */
+/* 메인 컨테이너 설정 */
+.index-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%; /* 페이지 전체 너비로 설정 */
+    box-sizing: border-box; /* 패딩을 포함한 전체 너비 계산 */
+    padding: 0 50px; /* 양쪽에 여백 추가 */
+}
+
+/* 왼쪽 애니메이션 이미지 컨테이너 */
+.animated-image-container {
+    flex: 1; /* 컨테이너 내에서 균형 있게 배치 */
+    max-width: 800px; /* 이미지의 최대 너비 설정 */
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 20px;
+    
+}
+
+/* 이미지에 애니메이션 적용 */
+.animated-image {
+    width: 100%;
+    transition: transform 0.8s ease-in-out;
+}
+
+/* 마우스를 올렸을 때 확대 효과 */
+.animated-image-container:hover .animated-image {
+    transform: scale(1.05);
+}
+
+/* 이미지에 랜덤 움직임 효과 추가 */
+@keyframes random-move {
+    0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    20% { transform: translate(-5px, 3px) rotate(-1deg) scale(1.02); }
+    40% { transform: translate(4px, -4px) rotate(1deg) scale(1.03); }
+    60% { transform: translate(-3px, 2px) rotate(-1deg) scale(1.01); }
+    80% { transform: translate(3px, -3px) rotate(1deg) scale(1.02); }
+    100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+/* 애니메이션을 이미지에 적용 */
+.animated-image {
+    animation: random-move 15s ease-in-out infinite; /* 지속 시간을 15초로 설정 */
+}
+
+/* 오른쪽 텍스트 및 버튼 스타일 */
+.text-content {
+    flex: 1; /* 컨테이너 내에서 균형 있게 배치 */
+    padding: 50px;
+    text-align: left;
+    max-width: 600px; /* 텍스트 영역의 최대 너비 설정 */
+}
+
+.text-content p {
+    font-size: 1.2em;
+    color: #5a5a5a;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.button-container {
+    margin-top: 20px;
+}
+
+
+/* 인덱스 헤더 스타일 */
+.index-header-title {
+    font-size: 2.5em;
+    color: #707070;
+    margin-bottom: 20px; 
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+
+
+/* 헤더 스타일 */
 .header-title {
     font-size: 30px;
     font-weight: 300; /* 얇은 글씨 */
@@ -14,14 +92,13 @@
 body {
     min-width: 320px !important;
     width: 100%; /* 메뉴가 화면 너비에 맞게 표시되도록 설정 */
-
+    overflow-x: hidden;
     color: #5a5a5a;
     line-height: 1.6;
     margin: 0;
     padding: 0;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
-
 
 
 
@@ -298,8 +375,8 @@ header {
     align-items: center;
     padding: 20px;
     background-color: #002147; /* Oxford Blue */
-    
-
+    width: 100%; /* 전체 너비로 설정 */
+    box-sizing: border-box; /* padding을 포함해 전체 너비를 계산 */
 }
 
 
@@ -366,7 +443,7 @@ aside img {
 /* footer 스타일 - main 아래에 위치하도록 설정 */
 .footer {
     grid-column: 2; /* 오른쪽 main 영역 아래로 정렬 */
-    padding: 70px 10px;
+    padding: 70px 50px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -387,6 +464,11 @@ aside img {
     align-items: center;
     text-decoration: none;
 
+}
+
+.footer-right {
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    margin-right: 100px; /* 오른쪽 여백 추가 */
 }
 
 

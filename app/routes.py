@@ -16,6 +16,7 @@ from PIL import Image
 
 
 
+
 import os
 
 
@@ -107,6 +108,7 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.index'))
+
 
 
 
@@ -474,10 +476,14 @@ def upload_image():
     if file and allowed_file(file.filename):
         # 파일명을 안전하게 변경
         filename = secure_filename(file.filename)
-        # 파일 저장 경로 설정
-        upload_folder = current_app.config['UPLOAD_FOLDER']
-        file_path = os.path.join(upload_folder, filename)
         
+        # 유저별 업로드 폴더 설정
+        user_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], str(current_user.id))
+        os.makedirs(user_folder, exist_ok=True)  # 유저 폴더가 없으면 생성
+
+        # 유저 폴더에 파일 저장 경로 설정
+        file_path = os.path.join(user_folder, filename)
+
         # 파일 저장
         try:
             file.save(file_path)
@@ -487,7 +493,7 @@ def upload_image():
             return jsonify({'error': f'Failed to save file: {str(e)}'}), 500
 
         # 저장된 파일의 URL 생성
-        file_url = url_for('static', filename=f'uploads/{filename}', _external=True)
+        file_url = url_for('static', filename=f'uploads/{current_user.id}/{filename}', _external=True)
 
         # 업로드 성공 시 이미지 URL 반환
         return jsonify({'url': file_url}), 200
@@ -542,17 +548,16 @@ def upload_thumbnail():
         safe_menu_name = menu_name.replace(' ', '_').lower()
         current_app.logger.info(f"Generated safe_menu_name: {safe_menu_name}")  # 디버깅 로그 추가
 
+        # 유저별 썸네일 폴더 경로 설정
+        user_thumbnail_folder = os.path.join(current_app.config['THUMBNAIL_FOLDER'], str(current_user.id))
+        os.makedirs(user_thumbnail_folder, exist_ok=True)  # 폴더가 없으면 생성
+
         # Base64 문자열에서 이미지 데이터 추출
         image_data = image_data.split(",")[1]
         image = Image.open(BytesIO(base64.b64decode(image_data)))
 
         # 썸네일 저장 경로 설정
-        thumbnail_path = os.path.join(current_app.config['THUMBNAIL_FOLDER'], f'thumbnail_{safe_menu_name}.jpg')
-
-        # 썸네일 폴더가 없으면 생성
-        if not os.path.exists(current_app.config['THUMBNAIL_FOLDER']):
-            os.makedirs(current_app.config['THUMBNAIL_FOLDER'])
-            current_app.logger.info(f"Thumbnail folder created at {current_app.config['THUMBNAIL_FOLDER']}")
+        thumbnail_path = os.path.join(user_thumbnail_folder, f'thumbnail_{safe_menu_name}.jpg')
 
         # 이미지 저장
         image.save(thumbnail_path, 'JPEG')

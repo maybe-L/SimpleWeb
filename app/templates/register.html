@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 {% block content %}
-    <h1 class="header-title">Register</h1>
+    <h1 class="header-title">Create Your Profile</h1>
 
     <form method="POST" class="form-style" id="registration-form">
         {{ form.hidden_tag() }}
@@ -23,6 +23,7 @@
         </div>
         <br>
 
+
         <!-- 비밀번호 입력 필드 -->
         <div class="form-group">
             {{ form.password.label }}
@@ -34,6 +35,8 @@
             {{ form.confirm_password.label }}
             {{ form.confirm_password(size=32, class_='input-field') }}
         </div>
+        <br>
+        <p>Before signing up, please make sure to check your email’s availability, and keep your email and password handy for logging in!</p>
 
         <!-- 제출 버튼 -->
         <div class="form-group" style="text-align: center;"> <!-- 가운데 정렬 -->
